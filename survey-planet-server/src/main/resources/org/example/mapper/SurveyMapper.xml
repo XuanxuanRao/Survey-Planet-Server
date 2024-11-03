@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.example.mapper.SurveyMapper">
+
+    <resultMap id="surveyResultMap" type="org.example.entity.survey.Survey">
+        <result property="sid" column="sid"/>
+        <result property="uid" column="uid"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="state" column="state" typeHandler="org.example.handler.type.SurveyStateHandler"/>
+        <result property="type" column="type" typeHandler="org.example.handler.type.SurveyTypeHandler"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="openTime" column="open_time"/>
+        <result property="fillNum" column="fill_num"/>
+        <result property="timeLimit" column="time_limit"/>
+        <result property="showAnswer" column="show_answer"/>
+    </resultMap>
+
+
+    <delete id="delete" parameterType="list">
+        DELETE FROM survey
+        WHERE sid IN
+        <foreach collection="list" item="sid" separator="," open="(" close=")">
+            #{sid}
+        </foreach>
+    </delete>
+
+
+    <select id="getBySid" resultMap="surveyResultMap">
+        SELECT sid, uid, title, description, type, state, create_time, update_time, open_time, fill_num, time_limit, show_answer
+        FROM survey
+        WHERE sid = #{sid}
+    </select>
+
+    <insert id="insert" parameterType="org.example.entity.survey.Survey" useGeneratedKeys="true" keyProperty="sid">
+        INSERT INTO survey (uid, title, description, type, create_time, update_time, time_limit)
+        VALUES (#{uid}, #{title}, #{description}, #{type,typeHandler=org.example.handler.type.SurveyTypeHandler}, #{createTime}, #{updateTime}, #{timeLimit})
+    </insert>
+
+    <insert id="addFillNum">
+        UPDATE survey
+        SET fill_num = fill_num + 1
+        WHERE sid = #{sid}
+    </insert>
+
+    <select id="getCreatedList" resultMap="surveyResultMap">
+        SELECT sid, uid, title, description, type, state, create_time, update_time, open_time, fill_num, time_limit, show_answer
+        FROM survey
+        WHERE uid = #{userId} and state != 'delete'
+        ORDER BY ${orderBy} DESC
+    </select>
+
+    <select id="getDeletedList" resultMap="surveyResultMap">
+        SELECT sid, uid, title, description, type, state, create_time, update_time, open_time, fill_num, time_limit, show_answer
+        FROM survey
+        WHERE state = 'delete'
+    </select>
+
+    <select id="list" resultMap="surveyResultMap">
+        SELECT sid, uid, title, description, type, state, create_time, update_time, open_time, fill_num, time_limit, show_answer
+        FROM survey
+        WHERE sid IN
+        <foreach collection="sids" item="sid" separator="," open="(" close=")">
+            #{sid}
+        </foreach>
+        AND state != 'delete'
+        ORDER BY ${orderBy} DESC
+    </select>
+
+    <update id="update" parameterType="org.example.entity.survey.Survey">
+        update survey
+        <set>
+            <if test="title != null and title != ''">title = #{title},</if>
+            description = #{description},
+            type = #{type,typeHandler=org.example.handler.type.SurveyTypeHandler},
+            state = #{state,typeHandler=org.example.handler.type.SurveyStateHandler},
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="openTime != null">open_time = #{openTime},</if>
+            <if test="showAnswer != null">show_answer = #{showAnswer},</if>
+            <if test="timeLimit != null">time_limit = #{timeLimit},</if>
+            fill_num = #{fillNum},
+        </set>
+        WHERE sid = #{sid}
+    </update>
+
+
+</mapper>

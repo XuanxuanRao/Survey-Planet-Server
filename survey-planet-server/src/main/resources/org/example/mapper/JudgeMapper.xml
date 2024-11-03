@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.example.mapper.JudgeMapper">
+
+    <resultMap id="judgeResultMap" type="org.example.entity.judge.Judge">
+        <result property="submitId" column="submit_id"/>
+        <result property="qid" column="qid"/>
+        <result property="uid" column="uid"/>
+        <result property="language" column="language"/>
+        <result property="codeContent" column="code_content"/>
+        <result property="status" column="judge_status"/>
+        <result property="score" column="score"/>
+        <result property="errorMessage" column="error_message"/>
+        <result property="createTime" column="judge_create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <collection property="caseJudgeResults" ofType="org.example.entity.judge.CaseJudgeResult">
+            <result property="submitId" column="submit_id"/>
+            <result property="qid" column="qid"/>
+            <result property="caseId" column="case_id"/>
+            <result property="time" column="time"/>
+            <result property="memory" column="memory"/>
+            <result property="status" column="case_status"/>
+            <result property="createTime" column="case_create_time"/>
+            <result property="inputDataUrl" column="input_data_url"/>
+            <result property="outputDataUrl" column="output_data_url"/>
+            <result property="userOutput" column="user_output"/>
+        </collection>
+    </resultMap>
+
+    <insert id="addJudgeResult" parameterType="org.example.entity.judge.Judge">
+        INSERT INTO judge (submit_id, qid, uid, code_content, language, status, score, error_message, create_time, update_time)
+        VALUE (#{submitId}, #{qid}, #{uid}, #{codeContent}, #{language},
+               #{status}, #{score}, #{errorMessage}, #{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="addCaseResult" parameterType="list">
+        <if test="list != null and list.size() > 0">
+            INSERT INTO judge_case (submit_id, qid, case_id, status, time, memory, input_data_url, output_data_url, user_output, create_time)
+            VALUES
+            <foreach collection="list" item="item" separator=",">
+                (#{item.submitId}, #{item.qid}, #{item.caseId}, #{item.status}, #{item.time}, #{item.memory},
+                #{item.inputDataUrl}, #{item.outputDataUrl}, #{item.userOutput}, #{item.createTime})
+            </foreach>
+        </if>
+    </insert>
+
+
+    <select id="getJudgeBySubmitId" resultMap="judgeResultMap">
+        SELECT judge.submit_id, judge.qid, uid, code_content, language, judge.status as judge_status, score, error_message, judge.create_time as judge_create_time, update_time,
+               case_id, judge_case.status as case_status, time, memory, input_data_url, output_data_url, user_output, judge_case.create_time as case_create_time
+        FROM judge LEFT JOIN judge_case ON judge.submit_id = judge_case.submit_id
+        WHERE judge.submit_id = #{submitId}
+        ORDER BY case_id
+    </select>
+
+
+</mapper>

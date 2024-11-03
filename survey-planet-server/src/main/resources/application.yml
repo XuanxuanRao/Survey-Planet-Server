@@ -1,0 +1,66 @@
+server:
+  port: 8088
+
+spring:
+  profiles:
+    active: dev
+
+  main:
+    allow-circular-references: true
+
+  datasource:
+    driver-class-name: ${survey-planet.datasource.driver-class-name}
+    url: jdbc:mysql://${survey-planet.datasource.host}:${survey-planet.datasource.port}/${survey-planet.datasource.database}?allowMultiQueries=true
+    username: ${survey-planet.datasource.username}
+    password: ${survey-planet.datasource.password}
+
+  application:
+    name: survey-planet
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
+
+  mail:
+    host: ${survey-planet.mail.host}
+    port: ${survey-planet.mail.port}
+    username: ${survey-planet.mail.username}
+    password: ${survey-planet.mail.password}
+    protocol: ${survey-planet.mail.protocol}
+    properties:
+      mail.smtp.auth: ${survey-planet.mail.properties.mail.smtp.auth}
+      mail.smtp.starttls.enable: ${survey-planet.mail.properties.mail.smtp.starttls.enable}
+      mail.smtp.ssl.enable: ${survey-planet.mail.properties.mail.smtp.ssl.enable}
+
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+
+
+survey-planet:
+  aliyun:
+    oss:
+      endpoint: ${survey-planet.aliyun.oss.endpoint}
+      accessKeyId: ${survey-planet.aliyun.oss.accessKeyId}
+      accessKeySecret: ${survey-planet.aliyun.oss.accessKeySecret}
+      bucketName: ${survey-planet.aliyun.oss.bucketName}
+
+  jwt:
+    secret-key: wuthering_wave
+    ttl: 7200000
+    token-name: token
+
+  go-judge:
+    base-url: ${survey-planet.go-judge.baseUrl}
+    max-process-number: ${survey-planet.go-judge.maxProcessNumber}
+    memory-limit-mb: ${survey-planet.go-judge.memoryLimitMb}
+    stack-limit-mb: ${survey-planet.go-judge.stackLimitMb}
+    stdio-size-mb: ${survey-planet.go-judge.stdioSizeMb}

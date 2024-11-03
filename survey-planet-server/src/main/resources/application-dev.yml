@@ -1,0 +1,37 @@
+survey-planet:
+  # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: rm-2zevu9knfs3k96s7xyo.mysql.rds.aliyuncs.com
+    port: 3306
+    database: survey_planet_dev
+    username: survey_planet_service
+    password: rcx2206!
+
+  aliyun:
+    # 阿里云OSS配置
+    oss:
+      endpoint: oss-cn-beijing.aliyuncs.com
+      accessKeyId: LTAI5tS6M224UpKHj9vXrL4Z
+      accessKeySecret: 9srpqx72xTYdNPpfSN7C3NITN5RAwK
+      bucketName: survey-planet-test
+
+  # 邮箱配置
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    username: surveyplanetservice@gmail.com
+    password: efphdphbckztlqsg
+    protocol: smtp
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.ssl.enable: true
+
+  # go-judge 配置
+  go-judge:
+    baseUrl: http://59.110.163.198:5051
+    maxProcessNumber: 128
+    memoryLimitMb: 512
+    stackLimitMb: 128
+    stdioSizeMb: 32

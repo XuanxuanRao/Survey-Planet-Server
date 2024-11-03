@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.example.mapper.ResponseMapper">
+
+    <resultMap id="responseResultMap" type="org.example.entity.response.Response">
+        <id property="rid" column="rid"/>
+        <result property="sid" column="sid"/>
+        <result property="uid" column="uid"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="grade" column="surveyGrade"/>
+        <result property="finished" column="finished"/>
+        <collection property="items" ofType="org.example.entity.response.ResponseItem">
+            <id property="submitId" column="submit_id"/>
+            <result property="rid" column="rid"/>
+            <result property="qid" column="qid"/>
+            <result property="grade" column="questionGrade"/>
+            <result property="content" column="content" typeHandler="org.example.handler.type.StringListHandler"/>
+        </collection>
+    </resultMap>
+
+    <insert id="insertRecord" parameterType="org.example.entity.response.Response" useGeneratedKeys="true" keyProperty="rid">
+        INSERT INTO response_record (rid, sid, uid, create_time, update_time, finished)
+        VALUES (#{rid}, #{sid}, #{uid}, #{createTime}, #{updateTime}, IFNULL(#{finished}, DEFAULT(finished)))
+    </insert>
+
+    <insert id="insertItems" parameterType="list" useGeneratedKeys="true" keyProperty="submitId">
+        INSERT INTO response_item (rid, qid, content) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.rid}, #{item.qid}, #{item.content,typeHandler=org.example.handler.type.StringListHandler})
+        </foreach>
+    </insert>
+
+    <update id="setRecordGrade">
+        UPDATE response_record SET grade = #{grade}, finished = true, update_time = now()
+        WHERE rid = #{rid}
+    </update>
+
+    <update id="setItemGrade">
+        UPDATE response_item SET grade = #{grade}
+        WHERE submit_id = #{submitId}
+    </update>
+
+    <delete id="deleteRecordsBySid" parameterType="long">
+        DELETE FROM response_record WHERE sid = #{sid}
+    </delete>
+
+    <delete id="deleteRecordByRid" parameterType="long">
+        DELETE FROM response_record WHERE rid = #{rid}
+    </delete>
+
+    <delete id="deleteItemsByRid" parameterType="long">
+        DELETE FROM response_item WHERE rid = #{rid}
+    </delete>
+
+
+    <select id="getBySid" parameterType="long" resultMap="responseResultMap">
+        SELECT response_record.rid as rid, sid, uid, create_time, update_time, response_record.grade as surveyGrade, finished, submit_id, qid, content, response_item.grade as questionGrade
+        FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
+        WHERE sid = #{sid}
+    </select>
+
+
+    <select id="getByUid" parameterType="long" resultMap="responseResultMap">
+        SELECT response_record.rid as rid, sid, uid, create_time, update_time, response_record.grade as surveyGrade, finished, submit_id, qid, content, response_item.grade as questionGrade
+        FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
+        WHERE uid = #{uid}
+    </select>
+
+    <select id="getByRid" parameterType="long" resultMap="responseResultMap">
+        SELECT response_record.rid as rid, sid, uid, create_time, update_time, response_record.grade as surveyGrade, finished, submit_id, qid, content, response_item.grade as questionGrade
+        FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
+        WHERE response_record.rid = #{rid}
+    </select>
+
+
+</mapper>
