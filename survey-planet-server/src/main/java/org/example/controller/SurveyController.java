@@ -3,7 +3,10 @@ package org.example.controller;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import org.example.Result.PageResult;
 import org.example.Result.Result;
+import org.example.annotation.ControllerLog;
+import org.example.dto.ResponsePageQueryDTO;
 import org.example.dto.survey.CreateSurveyDTO;
 import org.example.entity.response.Response;
 import org.example.entity.survey.Survey;
@@ -39,6 +42,7 @@ public class SurveyController {
     private ResponseService responseService;
 
     @GetMapping("/list")
+    @ControllerLog(name = "getSurveyList")
     public Result<List<SurveyVO>> getSurveys(
             @RequestParam String type,  // 查找创建的问卷或是填写过的问卷
             @RequestParam(defaultValue = "create_time") String sort)
@@ -149,8 +153,13 @@ public class SurveyController {
      * @return 问卷的填写结果
      */
     @GetMapping("/{sid}/response/detail")
-    public Result<List<Response>> getResponses(@PathVariable Long sid) {
+    public Result<List<Response>> getResponsesDetail(@PathVariable Long sid) {
         return Result.success(responseService.getResponseBySid(sid));
+    }
+
+    @GetMapping("/response")
+    public Result<PageResult<Response>> getResponses(@RequestBody ResponsePageQueryDTO responsePageQueryDTO) {
+        return Result.success(responseService.pageQuery(responsePageQueryDTO));
     }
 
 //    @GetMapping("survey/{sid}/response/page")

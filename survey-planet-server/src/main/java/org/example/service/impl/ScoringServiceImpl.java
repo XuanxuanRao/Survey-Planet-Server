@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -52,16 +53,19 @@ public class ScoringServiceImpl implements ScoringService {
 
         // 使用 CompletableFuture.allOf 等待所有任务完成
         CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-
         allOf.thenRun(() -> {
-            int grade = futures.stream()
-                    .map(CompletableFuture::join) // 等待所有异步任务完成并获取结果
-                    .filter(Objects::nonNull) // 过滤掉 null 值
-                    .peek(pair -> responseMapper.setItemGrade(pair.getKey(), pair.getValue()))
-                    .mapToInt(Pair::getValue)
-                    .sum();
-            log.info("Grade of response {} is {}", response.getRid(), grade);
-            responseMapper.setRecordGrade(response.getRid(), grade);
+            try {
+                int grade = futures.stream()
+                        .map(CompletableFuture::join) // 等待所有异步任务完成并获取结果
+                        .filter(Objects::nonNull) // 过滤掉 null 值
+                        .peek(pair -> responseMapper.setItemGrade(pair.getKey(), pair.getValue()))
+                        .mapToInt(pair -> Optional.ofNullable(pair.getValue()).orElse(0))
+                        .sum();
+                log.info("Grade of response {} is {}", response.getRid(), grade);
+                responseMapper.setRecordGrade(response.getRid(), grade);
+            } catch (Exception e) {
+                log.error("Error when scoring response", e);
+            }
         });
     }
 
@@ -106,6 +110,9 @@ public class ScoringServiceImpl implements ScoringService {
 
                 // 这里可以返回 scoreFuture 的结果
                 return scoreFuture.join(); // 阻塞等待评测结果
+            }).exceptionally(ex -> {
+                log.error("Error during judgment task: {}", ex.getMessage(), ex);
+                return 0;
             }).thenApply(score -> Pair.of(item.getSubmitId(), score));
         }
         throw new IllegalArgumentException("Unknown question type: " + question.getClass().getName());

@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
 import org.example.Result.Result;
+import org.example.annotation.ControllerLog;
 import org.example.dto.EmailSendCodeDTO;
 import org.example.service.EmailService;
 import org.example.utils.AliOSSUtil;
@@ -24,6 +25,7 @@ public class CommonController {
     EmailService emailService;
 
     @PostMapping("/upload")
+    @ControllerLog(name = "upload", intoDB = true)
     public Result<String> upload(MultipartFile file) {
         try {
             String originalFilename = file.getOriginalFilename();
@@ -48,6 +50,7 @@ public class CommonController {
     }
 
     @PostMapping("/email/code")
+    @ControllerLog(name = "sendCode2Email", intoDB = true)
     public Result<String> sendCode2Email(@RequestBody EmailSendCodeDTO emailSendCodeDTO) {
         emailService.sendVerificationCode(emailSendCodeDTO);
         return Result.success("Email sent successfully");

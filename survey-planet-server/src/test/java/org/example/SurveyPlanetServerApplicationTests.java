@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.example.mapper.ResponseMapper;
 import org.example.utils.AliOSSUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,15 +12,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 @SpringBootTest
 class SurveyPlanetServerApplicationTests {
 
     @Resource
     AliOSSUtil aliOSSUtil;
+
+    @Resource
+    ResponseMapper responseMapper;
 
     @Test
     void download() {

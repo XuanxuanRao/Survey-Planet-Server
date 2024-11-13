@@ -13,9 +13,7 @@ import org.example.exception.CompileError;
 import org.example.exception.SubmitError;
 import org.example.exception.SystemError;
 import org.example.judge.utils.TestCaseUtil;
-import org.example.loader.LanguageConfigLoader;
 import org.example.utils.SandboxUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 

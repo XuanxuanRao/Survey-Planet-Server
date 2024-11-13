@@ -1,8 +1,11 @@
 package org.example.service;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.Result.PageResult;
 import org.example.dto.ResponseDTO;
+import org.example.dto.ResponsePageQueryDTO;
 import org.example.entity.response.Response;
+import org.example.entity.response.ResponseItem;
 import org.example.vo.ResponseVO;
 
 import java.io.IOException;
@@ -32,4 +35,8 @@ public interface ResponseService {
     void export(Long sid, HttpServletResponse httpServletResponse) throws IOException;
 
     ResponseVO getResponseByRid(Long rid);
+
+    PageResult<Response> pageQuery(ResponsePageQueryDTO responsePageQueryDTO);
+
+    List<ResponseItem> getResponseByQid(Long qid);
 }

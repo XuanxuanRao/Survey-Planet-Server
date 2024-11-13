@@ -1,5 +1,8 @@
 package org.example.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,9 +11,12 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.example.Result.PageResult;
 import org.example.context.BaseContext;
 import org.example.dto.ResponseDTO;
+import org.example.dto.ResponsePageQueryDTO;
 import org.example.entity.question.QuestionType;
+import org.example.entity.response.ResponseItem;
 import org.example.entity.survey.Survey;
 import org.example.entity.question.Question;
 import org.example.entity.response.Response;
@@ -138,6 +144,19 @@ public class ResponseServiceImpl implements ResponseService {
     }
 
     @Override
+    public PageResult<Response> pageQuery(ResponsePageQueryDTO responsePageQueryDTO) {
+        PageHelper.startPage(responsePageQueryDTO.getPageNum(), responsePageQueryDTO.getPageSize());
+        Page<Response> responses = responseMapper.pageQuery(
+                responsePageQueryDTO.getSid(),
+                responsePageQueryDTO.getGradeLb(),
+                responsePageQueryDTO.getGradeUb(),
+                responsePageQueryDTO.getQueryMap(),
+                responsePageQueryDTO.getQueryMap() == null ? 0 : responsePageQueryDTO.getQueryMap().size()
+        );
+        return new PageResult<>(responses.getTotal(), responses.getResult());
+    }
+
+    @Override
     public void export(Long sid, HttpServletResponse httpServletResponse) throws IOException {
         Survey survey = surveyMapper.getBySid(sid);
         if (survey == null || survey.getState() == SurveyState.DELETE || !Objects.equals(survey.getUid(), BaseContext.getCurrentId())) {
@@ -187,6 +206,11 @@ public class ResponseServiceImpl implements ResponseService {
 
         log.info("export survey {} success", sid);
 
+    }
+
+    @Override
+    public List<ResponseItem> getResponseByQid(Long qid) {
+        return responseMapper.getByQid(qid);
     }
 
     private int findQuestionIndex(List<Question> questions, Long qid) {

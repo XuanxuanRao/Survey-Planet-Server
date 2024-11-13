@@ -14,6 +14,12 @@ spring:
     username: ${survey-planet.datasource.username}
     password: ${survey-planet.datasource.password}
 
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
   application:
     name: survey-planet
 
@@ -43,6 +49,8 @@ mybatis:
 logging:
   level:
     org.springframework.jdbc.support.JdbcTransactionManager: debug
+  file:
+    name: logs/survey-planet.log
 
 
 survey-planet:

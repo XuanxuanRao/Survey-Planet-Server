@@ -1,12 +1,15 @@
 package org.example.mapper;
 
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.example.annotation.AutoFill;
 import org.example.entity.response.Response;
 import org.example.entity.response.ResponseItem;
 import org.example.enumeration.OperationType;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -41,4 +44,8 @@ public interface ResponseMapper {
     void setRecordGrade(Long rid, Integer grade);
 
     void setItemGrade(Long submitId, Integer grade);
+
+    Page<Response> pageQuery(Long sid, Integer gradeLb, Integer gradeUb, @Param("condition")Map<Long, String> queryMap, int querySize);
+
+    List<ResponseItem> getByQid(Long qid);
 }

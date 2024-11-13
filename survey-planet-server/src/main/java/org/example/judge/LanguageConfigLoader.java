@@ -1,4 +1,4 @@
-package org.example.loader;
+package org.example.judge;
 
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;

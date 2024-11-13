@@ -142,6 +142,7 @@ public class SurveyServiceImpl implements SurveyService {
             return 0;
         }
         // 然后删除与这些问卷关联的回答
+        // todo: if the question's type is CODE, we should deleted the information from judge and judge_case
         surveys.forEach(survey -> {
             responseService.deleteBySid(survey.getSid());
         });

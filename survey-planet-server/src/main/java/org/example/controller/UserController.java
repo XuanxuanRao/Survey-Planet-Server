@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
 import org.example.Result.Result;
+import org.example.annotation.ControllerLog;
 import org.example.context.BaseContext;
 import org.example.dto.user.UserLoginDTO;
 import org.example.dto.user.UserRegisterDTO;
@@ -36,6 +37,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @ControllerLog(name = "login", intoDB = true)
     public Result<UserLoginVO> login(@RequestBody UserLoginDTO loginDTO) {
         User user = userService.login(loginDTO);
 
@@ -52,6 +54,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
+    @ControllerLog(name = "register", intoDB = true)
     public Result<UserRegisterVO> register(@RequestBody UserRegisterDTO userDTO) {
         User user = userService.register(userDTO);
 
@@ -66,6 +69,7 @@ public class UserController {
 
 
     @PutMapping("/reset")
+    @ControllerLog(name = "resetPassword", intoDB = true)
     public Result<UserResetVO> reset(@RequestBody UserResetDTO userResetDTO) {
         User user = userService.resetPassword(userResetDTO);
 
@@ -79,6 +83,7 @@ public class UserController {
     }
 
     @PutMapping("/user")
+    @ControllerLog(name = "updateUserInform")
     public Result<Void> update(@RequestBody User user) {
         userService.update(user);
         return Result.success();
