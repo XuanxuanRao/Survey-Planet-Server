@@ -1,5 +1,6 @@
 package org.example.service;
 
+import cn.hutool.core.lang.Pair;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.Result.PageResult;
 import org.example.dto.ResponseDTO;
@@ -10,6 +11,7 @@ import org.example.vo.ResponseVO;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author chenxuanrao06@gmail.com
@@ -39,4 +41,11 @@ public interface ResponseService {
     PageResult<Response> pageQuery(ResponsePageQueryDTO responsePageQueryDTO);
 
     List<ResponseItem> getResponseByQid(Long qid);
+
+    /**
+     * 获取用户提交的历史记录
+     * @param uid 用户 ID
+     * @return Map表示提交记录
+     */
+    Map<Long, Response> querySubmitHistory(Long uid);
 }

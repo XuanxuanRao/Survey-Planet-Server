@@ -1,6 +1,9 @@
 package org.example.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
+import org.example.Result.PageResult;
 import org.example.entity.question.Question;
 import org.example.entity.response.ResponseItem;
 import org.example.exception.QuestionNotFoundException;
@@ -33,5 +36,12 @@ public class ReportServiceImpl implements ReportService {
         }
         List<ResponseItem> responseItems = responseService.getResponseByQid(qid);
         return question.analyse(responseItems);
+    }
+
+    @Override
+    public PageResult<ResponseItem> getQuestionDetail(Long qid, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        PageInfo<ResponseItem> pageInfo = new PageInfo<>(responseService.getResponseByQid(qid));
+        return new PageResult<>(pageInfo.getTotal(), pageInfo.getList());
     }
 }

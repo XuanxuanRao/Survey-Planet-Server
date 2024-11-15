@@ -43,9 +43,11 @@ public class SurveyController {
 
     @GetMapping("/list")
     @ControllerLog(name = "getSurveyList")
-    public Result<List<SurveyVO>> getSurveys(
+    public Result<List<? extends SurveyVO>> getSurveys(
             @RequestParam String type,  // 查找创建的问卷或是填写过的问卷
-            @RequestParam(defaultValue = "create_time") String sort)
+            @RequestParam(defaultValue = "create_time") String sort,
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "1") Integer pageSize)
     {
         if (!"created".equals(type) && !"filled".equals(type)) {
             throw new IllegalRequestException("", "Invalid type " + type);
@@ -55,9 +57,8 @@ public class SurveyController {
         }
 
         if ("created".equals(type)) {
-            return Result.success(surveyService.getSurveys(BaseContext.getCurrentId(), true, sort).stream().map(s -> {
+            return Result.success(surveyService.getSurveys(BaseContext.getCurrentId(), true, pageNum, pageSize, sort).stream().map(s -> {
                         CreatedSurveyVO surveyVO = CreatedSurveyVO.builder()
-                                // .questions(transfer(questionService.getBySid(s.getSid())))
                                 .type(s.getType().getValue())
                                 .state(s.getState().getValue())
                                 .build();
@@ -69,15 +70,7 @@ public class SurveyController {
 
         // todo: 按照填写时间降序排列
         else {
-            return Result.success(surveyService.getSurveys(BaseContext.getCurrentId(), false, sort).stream().map(s -> {
-                        FilledSurveyVO surveyVO = FilledSurveyVO.builder()
-                                .type(s.getType().getValue())
-                                .state(s.getState().getValue())
-                                .build();
-                        BeanUtils.copyProperties(s, surveyVO);
-                        return surveyVO;
-                    })
-                    .collect(Collectors.toList()));
+            return Result.success(surveyService.getFilledSurveys(BaseContext.getCurrentId(), pageNum, pageSize, sort).getList());
         }
     }
 

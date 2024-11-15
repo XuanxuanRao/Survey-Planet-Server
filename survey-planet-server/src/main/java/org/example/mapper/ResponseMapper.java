@@ -1,5 +1,6 @@
 package org.example.mapper;
 
+import cn.hutool.core.lang.Pair;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -48,4 +49,6 @@ public interface ResponseMapper {
     Page<Response> pageQuery(Long sid, Integer gradeLb, Integer gradeUb, @Param("condition")Map<Long, String> queryMap, int querySize);
 
     List<ResponseItem> getByQid(Long qid);
+
+    List<Response> getSidByUid(Long uid);
 }

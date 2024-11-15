@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.example.vo.question.FilledQuestionVO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,4 +17,9 @@ import java.util.List;
 @AllArgsConstructor
 public class FilledSurveyVO extends SurveyVO {
     private List<FilledQuestionVO> questions;
+    /**
+     * 最近一次提交 id
+     */
+    private Long rid;
+    private LocalDateTime submitTime;
 }

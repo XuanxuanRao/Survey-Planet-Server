@@ -21,6 +21,18 @@
     </properties>
 
     <dependencies>
+        <!-- 词云 -->
+        <dependency>
+            <groupId>com.kennycason</groupId>
+            <artifactId>kumo-core</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kennycason</groupId>
+            <artifactId>kumo-tokenizers</artifactId>
+            <version>1.12</version>
+        </dependency>
+
         <dependency>
             <groupId>org.example</groupId>
             <artifactId>survey-planet-common</artifactId>

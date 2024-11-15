@@ -1,8 +1,8 @@
 package org.example.service.impl;
 
+import cn.hutool.core.lang.Pair;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,7 +41,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author chenxuanrao06@gmail.com
@@ -105,6 +107,11 @@ public class ResponseServiceImpl implements ResponseService {
     @Override
     public List<Response> getResponseByUid(Long uid) {
         return responseMapper.getByUid(uid);
+    }
+
+    @Override
+    public Map<Long, Response> querySubmitHistory(Long uid) {
+        return responseMapper.getSidByUid(uid).stream().collect(Collectors.toMap(Response::getSid, response -> response));
     }
 
     @Override

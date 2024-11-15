@@ -8,6 +8,7 @@ import org.example.entity.response.ResponseItem;
 import org.example.vo.QuestionAnalyseVO;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -26,8 +27,9 @@ public class MultipleChoiceQuestion extends Question {
         questionAnalyseVO.setQid(this.getQid());
 
         long total = 0;
-        HashMap<String, Long> count = new HashMap<>();
+        LinkedHashMap<String, Long> count = new LinkedHashMap<>();
         HashMap<Integer, Long> gradeCount = new HashMap<>();
+        options.forEach(option -> count.put(option, 0L));
         for (ResponseItem responseItem : responseItems) {
             if (responseItem.getContent() == null || responseItem.getContent().isEmpty()) {
                 continue;
@@ -36,7 +38,7 @@ public class MultipleChoiceQuestion extends Question {
             if (responseItem.getGrade() != null) {
                 gradeCount.put(responseItem.getGrade(), gradeCount.getOrDefault(responseItem.getGrade(), 0L) + 1);
             }
-            responseItem.getContent().forEach(option -> count.put(option, count.getOrDefault(option, 0L) + 1));
+            responseItem.getContent().forEach(option -> count.put(option, count.get(option) + 1));
         }
         questionAnalyseVO.setTotal(total);
         questionAnalyseVO.setAnswerCount(count);

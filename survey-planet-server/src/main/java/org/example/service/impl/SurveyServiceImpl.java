@@ -1,12 +1,13 @@
 package org.example.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import org.example.context.BaseContext;
 import org.example.dto.survey.CreateSurveyDTO;
 import org.example.dto.QuestionDTO;
 import org.example.entity.survey.Survey;
 import org.example.entity.question.Question;
-import org.example.entity.response.Response;
 import org.example.entity.survey.SurveyState;
 import org.example.entity.survey.SurveyType;
 import org.example.exception.IllegalOperationException;
@@ -16,6 +17,7 @@ import org.example.service.QuestionService;
 import org.example.service.ResponseService;
 import org.example.service.SurveyService;
 import org.example.utils.SharingCodeUtil;
+import org.example.vo.survey.FilledSurveyVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,13 +44,27 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public List<Survey> getSurveys(Long uid, boolean isCreated, String sortBy) {
+    public List<Survey> getSurveys(Long uid, boolean isCreated, int pageNum, int pageSize, String sortBy) {
         if (isCreated) {
             return surveyMapper.getCreatedList(uid, sortBy);
-        } else {
-            List<Long> sids = responseService.getResponseByUid(uid).stream().map(Response::getSid).toList();
-            return surveyMapper.list(sids, sortBy);
         }
+        return null;
+    }
+
+    @Override
+    public PageInfo<FilledSurveyVO> getFilledSurveys(Long uid, int pageNum, int pageSize, String sortBy) {
+        PageHelper.startPage(pageNum, pageSize);
+        var info = responseService.querySubmitHistory(uid);
+        return new PageInfo<>(surveyMapper.list(info.keySet().stream().toList(), sortBy).stream().map(s -> {
+            FilledSurveyVO surveyVO = FilledSurveyVO.builder()
+                    .type(s.getType().getValue())
+                    .state(s.getState().getValue())
+                    .rid(info.get(s.getSid()).getRid())
+                    .submitTime(info.get(s.getSid()).getUpdateTime())
+                    .build();
+            BeanUtils.copyProperties(s, surveyVO);
+            return surveyVO;
+        }).toList());
     }
 
     @Override

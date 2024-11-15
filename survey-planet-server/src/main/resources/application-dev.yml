@@ -4,7 +4,7 @@ survey-planet:
     driver-class-name: com.mysql.cj.jdbc.Driver
     host: rm-2zevu9knfs3k96s7xyo.mysql.rds.aliyuncs.com
     port: 3306
-    database: survey_planet_dev
+    database: dev
     username: survey_planet_service
     password: rcx2206!
 
