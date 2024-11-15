@@ -9,8 +9,8 @@
         <id property="rid" column="rid"/>
         <result property="sid" column="sid"/>
         <result property="uid" column="uid"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="record_create_time"/>
+        <result property="updateTime" column="record_update_time"/>
         <result property="grade" column="surveyGrade"/>
         <result property="finished" column="finished"/>
         <collection property="items" ofType="org.example.entity.response.ResponseItem">
@@ -18,6 +18,8 @@
             <result property="rid" column="rid"/>
             <result property="qid" column="qid"/>
             <result property="grade" column="questionGrade"/>
+            <result property="createTime" column="item_create_time"/>
+            <result property="updateTime" column="item_update_time"/>
             <result property="content" column="content" typeHandler="org.example.handler.type.StringListHandler"/>
         </collection>
     </resultMap>
@@ -52,6 +54,24 @@
         WHERE submit_id = #{submitId}
     </update>
 
+    <update id="updateResponse" parameterType="org.example.entity.response.Response">
+        UPDATE response_record
+        <set>
+            <if test="finished != null">finished = #{finished},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="grade != null">grade = #{grade},</if>
+        </set>
+        WHERE rid = #{rid}
+    </update>
+
+    <update id="updateItems">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE response_item SET content = #{item.content,typeHandler=org.example.handler.type.StringListHandler}
+            WHERE submit_id = #{item.submitId}
+        </foreach>
+    </update>
+
     <delete id="deleteRecordsBySid" parameterType="long">
         DELETE FROM response_record WHERE sid = #{sid}
     </delete>
@@ -66,26 +86,30 @@
 
 
     <select id="getBySid" parameterType="long" resultMap="responseResultMap">
-        SELECT response_record.rid as rid, sid, uid, create_time, update_time, response_record.grade as surveyGrade, finished, submit_id, qid, content, response_item.grade as questionGrade
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
+               submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
         FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
         WHERE sid = #{sid}
     </select>
 
 
     <select id="getByUid" parameterType="long" resultMap="responseResultMap">
-        SELECT response_record.rid as rid, sid, uid, create_time, update_time, response_record.grade as surveyGrade, finished, submit_id, qid, content, response_item.grade as questionGrade
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
+               submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
         FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
         WHERE uid = #{uid}
     </select>
 
     <select id="getByRid" parameterType="long" resultMap="responseResultMap">
-        SELECT response_record.rid as rid, sid, uid, create_time, update_time, response_record.grade as surveyGrade, finished, submit_id, qid, content, response_item.grade as questionGrade
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
+               submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
         FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
         WHERE response_record.rid = #{rid}
     </select>
 
     <select id="pageQuery" resultMap="responseResultMap">
-        SELECT response_record.rid as rid, sid, uid, create_time, update_time, response_record.grade as surveyGrade, finished, submit_id, qid, content, response_item.grade as questionGrade
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
+               submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
         FROM response_record LEFT JOIN response_item ON response_record.rid = response_item.rid
         WHERE
         sid = #{sid}
@@ -111,10 +135,10 @@
     </select>
 
     <select id="getByQid" resultMap="responseItemResultMap">
-        SELECT submit_id, rid, qid, grade, content
+        SELECT submit_id, rid, qid, grade, content, create_time, update_time
         FROM response_item
         WHERE qid = #{qid}
-        ORDER BY rid DESC
+        ORDER BY create_time
     </select>
 
     <select id="getSidByUid" resultType="org.example.entity.response.Response">
@@ -126,6 +150,17 @@
             WHERE t2.sid = response_record.sid
         )
         ORDER BY update_time DESC
+    </select>
+
+    <select id="getBySubmitId" resultMap="responseResultMap">
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
+               submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
+        FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
+        WHERE response_record.rid = (
+            SELECT rid
+            FROM response_item
+            WHERE submit_id = #{submitId}
+        )
     </select>
 
 </mapper>

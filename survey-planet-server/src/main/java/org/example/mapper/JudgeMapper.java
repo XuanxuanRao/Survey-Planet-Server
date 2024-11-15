@@ -19,4 +19,6 @@ public interface JudgeMapper {
 
     Judge getJudgeBySubmitId(Long submitId);
 
+    @AutoFill(value = OperationType.UPDATE)
+    void updateJudgeResult(Judge judge);
 }

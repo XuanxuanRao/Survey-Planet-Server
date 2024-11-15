@@ -2,9 +2,8 @@ package org.example.controller;
 
 import jakarta.annotation.Resource;
 import org.example.Result.Result;
-import org.example.context.BaseContext;
 import org.example.dto.ResponseDTO;
-import org.example.entity.response.Response;
+import org.example.entity.response.ResponseItem;
 import org.example.entity.survey.Survey;
 import org.example.entity.question.Question;
 import org.example.entity.survey.SurveyState;
@@ -20,7 +19,7 @@ import org.example.vo.survey.FilledSurveyVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
+import java.util.List;
 
 
 /**
@@ -75,6 +74,12 @@ public class ResponseController {
     @GetMapping("/response/{rid}")
     public Result<ResponseVO> query(@PathVariable Long rid) {
         return Result.success(responseService.getResponseByRid(rid));
+    }
+
+    @PutMapping("/response/{rid}")
+    public Result<Void> update(@PathVariable Long rid, @RequestBody List<ResponseItem> items) {
+        responseService.updateResponse(rid, items);
+        return Result.success();
     }
 
 }

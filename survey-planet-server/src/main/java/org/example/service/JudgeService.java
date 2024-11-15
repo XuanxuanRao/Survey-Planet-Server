@@ -12,4 +12,6 @@ public interface JudgeService {
 
     void insertJudge(Judge judge);
 
+    Judge getJudge(Long submitId);
+
 }

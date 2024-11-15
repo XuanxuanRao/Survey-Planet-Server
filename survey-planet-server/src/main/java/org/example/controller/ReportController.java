@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
  * @Description:
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/report")
 public class ReportController {
 
     @Resource
     private ReportService reportService;
 
-    @GetMapping("/report/{qid}")
+    @GetMapping("/stat/{qid}")
     public Result<QuestionAnalyseVO> analyseQuestion(@PathVariable Long qid) {
         return Result.success(reportService.analyseQuestion(qid));
     }

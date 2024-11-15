@@ -1,6 +1,5 @@
 package org.example.mapper;
 
-import cn.hutool.core.lang.Pair;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -51,4 +50,11 @@ public interface ResponseMapper {
     List<ResponseItem> getByQid(Long qid);
 
     List<Response> getSidByUid(Long uid);
+
+    @AutoFill(value = OperationType.UPDATE)
+    void updateResponse(Response response);
+
+    void updateItems(List<ResponseItem> items);
+
+    Response getBySubmitId(Long submitId);
 }

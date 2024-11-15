@@ -7,6 +7,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.example.annotation.ControllerLog;
 import org.example.entity.LogEntry;
+import org.example.exception.BusinessException;
 import org.example.mapper.LogRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -95,6 +96,11 @@ public class LogAspect {
      */
     @AfterThrowing(value = "logPointCut()", throwing = "throwable")
     public void doAfterThrowing(Throwable throwable) {
+
+        if (throwable instanceof BusinessException) {
+            return;
+        }
+
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
 
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;

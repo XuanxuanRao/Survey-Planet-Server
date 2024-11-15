@@ -47,13 +47,33 @@
         </if>
     </insert>
 
+    <update id="updateJudgeResult">
+        UPDATE judge
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="codeContent != null">code_content = #{codeContent},</if>
+            <if test="errorMessage != null">error_message = #{errorMessage},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="language != null">language = #{language},</if>
+        </set>
+    </update>
+
 
     <select id="getJudgeBySubmitId" resultMap="judgeResultMap">
-        SELECT judge.submit_id, judge.qid, uid, code_content, language, judge.status as judge_status, score, error_message, judge.create_time as judge_create_time, update_time,
-               case_id, judge_case.status as case_status, time, memory, input_data_url, output_data_url, user_output, judge_case.create_time as case_create_time
+        SELECT judge.submit_id, judge.qid, judge.uid, judge.code_content, judge.language, judge.status AS judge_status, judge.score, judge.error_message, judge.create_time AS judge_create_time, judge.update_time,
+               judge_case.case_id, judge_case.status AS case_status, judge_case.time, judge_case.memory, judge_case.input_data_url, judge_case.output_data_url, judge_case.user_output, judge_case.create_time AS case_create_time
         FROM judge LEFT JOIN judge_case ON judge.submit_id = judge_case.submit_id
+            INNER JOIN (
+                SELECT submit_id, case_id, MAX(judge_case.create_time) AS max_create_time
+                FROM judge_case
+                GROUP BY submit_id, case_id
+            ) AS latest_case
+                            ON judge_case.submit_id = latest_case.submit_id
+                                AND judge_case.case_id = latest_case.case_id
+                                AND judge_case.create_time = latest_case.max_create_time
         WHERE judge.submit_id = #{submitId}
-        ORDER BY case_id
+        ORDER BY judge_case.case_id;
     </select>
 
 

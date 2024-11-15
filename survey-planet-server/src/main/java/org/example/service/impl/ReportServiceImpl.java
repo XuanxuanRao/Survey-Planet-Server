@@ -34,14 +34,14 @@ public class ReportServiceImpl implements ReportService {
         if (question == null) {
             throw new QuestionNotFoundException("QUESTION_NOT_EXIST");
         }
-        List<ResponseItem> responseItems = responseService.getResponseByQid(qid);
+        List<ResponseItem> responseItems = responseService.getResponseItemsByQid(qid);
         return question.analyse(responseItems);
     }
 
     @Override
     public PageResult<ResponseItem> getQuestionDetail(Long qid, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        PageInfo<ResponseItem> pageInfo = new PageInfo<>(responseService.getResponseByQid(qid));
+        PageInfo<ResponseItem> pageInfo = new PageInfo<>(responseService.getResponseItemsByQid(qid));
         return new PageResult<>(pageInfo.getTotal(), pageInfo.getList());
     }
 }

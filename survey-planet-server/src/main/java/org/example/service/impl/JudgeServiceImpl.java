@@ -44,10 +44,18 @@ public class JudgeServiceImpl implements JudgeService {
 
     @Override
     public void insertJudge(Judge judge) {
-        judgeMapper.addJudgeResult(judge);
+        if (getJudge(judge.getSubmitId()) != null) {
+            judgeMapper.updateJudgeResult(judge);
+        } else {
+            judgeMapper.addJudgeResult(judge);
+        }
         if (judge.getCaseJudgeResults() != null && !judge.getCaseJudgeResults().isEmpty()) {
             judgeMapper.addCaseResult(judge.getCaseJudgeResults());
         }
     }
 
+    @Override
+    public Judge getJudge(Long submitId) {
+        return judgeMapper.getJudgeBySubmitId(submitId);
+    }
 }
