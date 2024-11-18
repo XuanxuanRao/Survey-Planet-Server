@@ -57,4 +57,6 @@ public interface ResponseMapper {
     void updateItems(List<ResponseItem> items);
 
     Response getBySubmitId(Long submitId);
+
+    List<ResponseItem> getBySubmitIds(List<Long> submitIds);
 }

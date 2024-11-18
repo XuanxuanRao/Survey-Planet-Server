@@ -261,6 +261,11 @@ public class ResponseServiceImpl implements ResponseService {
         return responseMapper.getBySubmitId(submitId);
     }
 
+    @Override
+    public List<ResponseItem> getResponseItemsBySubmitIds(List<Long> submitIds) {
+        return responseMapper.getBySubmitIds(submitIds);
+    }
+
     private int findQuestionIndex(List<Question> questions, Long qid) {
         return questions.indexOf(questions.stream().filter(question -> question.getQid().equals(qid)).findFirst().orElseThrow());
     }

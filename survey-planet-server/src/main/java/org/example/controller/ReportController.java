@@ -29,4 +29,5 @@ public class ReportController {
         return Result.success(reportService.getQuestionDetail(qid, pageNum, pageSize));
     }
 
+
 }

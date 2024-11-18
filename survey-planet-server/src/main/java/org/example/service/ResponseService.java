@@ -51,9 +51,10 @@ public interface ResponseService {
      * 更新用户的提交内容
      * @param rid 提交 ID
      * @param items 更新的题目回答
-     * @param needScoring 是否需要重新计算分数
      */
     void updateResponse(Long rid, List<ResponseItem> items);
 
     Response getResponseBySubmitId(Long submitId);
+
+    List<ResponseItem> getResponseItemsBySubmitIds(List<Long> submitIds);
 }

@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.entity.response.ResponseItem;
+import org.example.vo.QuestionAnalyseVO;
+
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

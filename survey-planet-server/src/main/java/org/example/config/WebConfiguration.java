@@ -13,7 +13,8 @@ public class WebConfiguration implements WebMvcConfigurer {
             "/api/login",
             "/api/register",
             "/api/common/email/code",
-            "/api/reset"
+            "/api/reset",
+            "/api/download"
     };
 
     // 注册拦截器

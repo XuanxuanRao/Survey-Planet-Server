@@ -163,4 +163,15 @@
         )
     </select>
 
+    <select id="getBySubmitIds" parameterType="list" resultMap="responseItemResultMap">
+        SELECT submit_id, rid, qid, grade, content, create_time, update_time
+        FROM response_item
+        WHERE submit_id IN
+        <foreach collection="submitIds" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+
 </mapper>

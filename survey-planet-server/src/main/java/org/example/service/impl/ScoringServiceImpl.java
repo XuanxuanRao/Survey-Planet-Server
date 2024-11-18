@@ -83,6 +83,7 @@ public class ScoringServiceImpl implements ScoringService {
     }
 
     @Override
+    @Async
     public void reCalcScore(Response response, List<ResponseItem> changedItems) {
         Integer originGrade = response.getGrade();
 

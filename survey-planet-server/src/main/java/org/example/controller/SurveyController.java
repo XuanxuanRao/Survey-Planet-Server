@@ -21,7 +21,6 @@ import org.example.utils.SharingCodeUtil;
 import org.example.vo.question.CreatedQuestionVO;
 import org.example.vo.survey.CreatedSurveyVO;
 import org.example.context.BaseContext;
-import org.example.vo.survey.FilledSurveyVO;
 import org.example.vo.survey.SurveyVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;

@@ -7,12 +7,11 @@ import org.example.Result.Result;
 import org.example.annotation.ControllerLog;
 import org.example.dto.EmailSendCodeDTO;
 import org.example.service.EmailService;
-import org.example.utils.AliOSSUtil;
+import org.example.service.FileService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.UUID;
 
 
 @Slf4j
@@ -20,22 +19,16 @@ import java.util.UUID;
 @RequestMapping("/api/common")
 public class CommonController {
     @Resource
-    AliOSSUtil aliOssUtil;
+    private FileService fileService;
+
     @Resource
-    EmailService emailService;
+    private EmailService emailService;
 
     @PostMapping("/upload")
     @ControllerLog(name = "upload", intoDB = true)
     public Result<String> upload(MultipartFile file) {
         try {
-            String originalFilename = file.getOriginalFilename();
-            assert originalFilename != null;
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            // 构造新文件名称
-            String objectName = UUID.randomUUID() + extension;
-            // 文件的请求路径
-            String path = aliOssUtil.upload(file.getBytes(), objectName);
-            // 返回文件路径
+            String path = fileService.uploadFile(file.getBytes(), file.getOriginalFilename(), file.getSize());
             return Result.success(path);
         } catch (IOException e) {
             log.error("File upload failed", e);
@@ -44,9 +37,9 @@ public class CommonController {
     }
 
     @DeleteMapping("/delete")
-    public Result<String> delete(@RequestParam String fileUrl) {
-        aliOssUtil.delete(fileUrl);
-        return Result.success("File deleted successfully");
+    public Result<Void> delete(@RequestParam String fileUrl) {
+        fileService.deleteFile(fileUrl);
+        return Result.success();
     }
 
     @PostMapping("/email/code")

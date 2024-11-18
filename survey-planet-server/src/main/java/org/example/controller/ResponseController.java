@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.Result.Result;
 import org.example.dto.ResponseDTO;
 import org.example.entity.response.ResponseItem;
@@ -10,6 +11,7 @@ import org.example.entity.survey.SurveyState;
 import org.example.exception.IllegalOperationException;
 import org.example.exception.IllegalRequestException;
 import org.example.exception.SurveyNotFoundException;
+import org.example.service.FileService;
 import org.example.service.QuestionService;
 import org.example.service.ResponseService;
 import org.example.service.SurveyService;
@@ -38,6 +40,9 @@ public class ResponseController {
 
     @Resource
     private QuestionService questionService;
+
+    @Resource
+    private FileService fileService;
 
     @PostMapping("/submit")
     public Result<Long> submit(@RequestBody ResponseDTO responseDTO) {
@@ -80,6 +85,12 @@ public class ResponseController {
     public Result<Void> update(@PathVariable Long rid, @RequestBody List<ResponseItem> items) {
         responseService.updateResponse(rid, items);
         return Result.success();
+    }
+
+    @PostMapping("/download")
+    public void downloadQuestionResponses(@RequestBody List<Long> submitIds, HttpServletResponse httpServletResponse) {
+        List<String> urls = responseService.getResponseItemsBySubmitIds(submitIds).stream().map(item -> item.getContent().get(0)).toList();
+        fileService.downloadAndZipFiles(urls, "responses.zip", httpServletResponse);
     }
 
 }
