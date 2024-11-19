@@ -3,6 +3,7 @@ package org.example.controller;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.Result.Result;
+import org.example.annotation.ControllerLog;
 import org.example.dto.ResponseDTO;
 import org.example.entity.response.ResponseItem;
 import org.example.entity.survey.Survey;
@@ -45,6 +46,7 @@ public class ResponseController {
     private FileService fileService;
 
     @PostMapping("/submit")
+    @ControllerLog(name = "submit", intoDB = true)
     public Result<Long> submit(@RequestBody ResponseDTO responseDTO) {
         // assure the response is successful
         return Result.success(responseService.submit(responseDTO));
@@ -82,6 +84,7 @@ public class ResponseController {
     }
 
     @PutMapping("/response/{rid}")
+    @ControllerLog(name = "updateResponse", intoDB = true)
     public Result<Void> update(@PathVariable Long rid, @RequestBody List<ResponseItem> items) {
         responseService.updateResponse(rid, items);
         return Result.success();

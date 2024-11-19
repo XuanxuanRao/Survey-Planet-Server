@@ -6,12 +6,14 @@ import lombok.SneakyThrows;
 import org.example.Result.PageResult;
 import org.example.Result.Result;
 import org.example.annotation.ControllerLog;
+import org.example.dto.QuestionDTO;
 import org.example.dto.ResponsePageQueryDTO;
 import org.example.dto.survey.CreateSurveyDTO;
 import org.example.entity.response.Response;
 import org.example.entity.survey.Survey;
 import org.example.entity.question.Question;
 import org.example.entity.survey.SurveyState;
+import org.example.exception.BadQuestionException;
 import org.example.exception.IllegalRequestException;
 import org.example.exception.SurveyNotFoundException;
 import org.example.service.QuestionService;
@@ -23,6 +25,7 @@ import org.example.vo.survey.CreatedSurveyVO;
 import org.example.context.BaseContext;
 import org.example.vo.survey.SurveyVO;
 import org.springframework.beans.BeanUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -95,7 +98,12 @@ public class SurveyController {
     }
 
     @PostMapping("/add")
+    @Transactional
     public Result<Long> createSurvey(@RequestBody CreateSurveyDTO createdSurveyDTO) {
+        if (!createdSurveyDTO.getQuestions().stream().allMatch(QuestionDTO::checkFormat)) {
+            throw new BadQuestionException("BAD_QUESTION");
+        }
+
         Long sid = surveyService.addSurvey(createdSurveyDTO).getSid();
         questionService.addQuestions(createdSurveyDTO.getQuestions(), sid);
 
