@@ -61,17 +61,55 @@
 
 
     <select id="getJudgeBySubmitId" resultMap="judgeResultMap">
-        SELECT judge.submit_id, judge.qid, judge.uid, judge.code_content, judge.language, judge.status AS judge_status, judge.score, judge.error_message, judge.create_time AS judge_create_time, judge.update_time,
-               judge_case.case_id, judge_case.status AS case_status, judge_case.time, judge_case.memory, judge_case.input_data_url, judge_case.output_data_url, judge_case.user_output, judge_case.create_time AS case_create_time
-        FROM judge LEFT JOIN judge_case ON judge.submit_id = judge_case.submit_id
-            INNER JOIN (
-                SELECT submit_id, case_id, MAX(judge_case.create_time) AS max_create_time
-                FROM judge_case
-                GROUP BY submit_id, case_id
-            ) AS latest_case
-                            ON judge_case.submit_id = latest_case.submit_id
-                                AND judge_case.case_id = latest_case.case_id
-                                AND judge_case.create_time = latest_case.max_create_time
+        SELECT
+            judge.submit_id,
+            judge.qid,
+            judge.uid,
+            judge.code_content,
+            judge.language,
+            judge.status AS judge_status,
+            judge.score,
+            judge.error_message,
+            judge.create_time AS judge_create_time,
+            judge.update_time,
+            judge_case.case_id,
+            judge_case.status AS case_status,
+            judge_case.time,
+            judge_case.memory,
+            judge_case.input_data_url,
+            judge_case.output_data_url,
+            judge_case.user_output,
+            judge_case.create_time AS case_create_time
+        FROM
+            judge LEFT JOIN
+            (
+                SELECT
+                    jc.submit_id,
+                    jc.case_id,
+                    jc.status,
+                    jc.time,
+                    jc.memory,
+                    jc.input_data_url,
+                    jc.output_data_url,
+                    jc.user_output,
+                    jc.create_time
+                FROM
+                    judge_case jc INNER JOIN
+                    (
+                        SELECT
+                            submit_id,
+                            case_id,
+                            MAX(create_time) AS max_create_time
+                        FROM
+                            judge_case
+                        GROUP BY
+                            submit_id, case_id
+                    ) latest_case
+                    ON jc.submit_id = latest_case.submit_id
+                        AND jc.case_id = latest_case.case_id
+                        AND jc.create_time = latest_case.max_create_time
+            ) judge_case
+            ON judge.submit_id = judge_case.submit_id
         WHERE judge.submit_id = #{submitId}
         ORDER BY judge_case.case_id;
     </select>

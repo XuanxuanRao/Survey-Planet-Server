@@ -23,4 +23,5 @@ public class QuestionVO {
     private Integer timeLimit;
     private Integer memoryLimit;
     private Integer stackLimit;
+    private List<String> languages;
 }
