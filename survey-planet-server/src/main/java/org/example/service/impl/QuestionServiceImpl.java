@@ -6,7 +6,6 @@ import org.example.entity.question.*;
 import org.example.exception.BadQuestionException;
 import org.example.mapper.QuestionMapper;
 import org.example.service.QuestionService;
-import org.example.service.factory.QuestionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +37,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         // 将 DTO 转为为 Question 实体
         List<Question> questionList = questions.stream()
-                .map(questionDTO -> QuestionFactory.createQuestion(questionDTO, sid))
+                .map(questionDTO -> questionDTO.toQuestionEntity(questionDTO, sid))
                 .toList();
 
         questionMapper.insertBaseQuestions(questionList);

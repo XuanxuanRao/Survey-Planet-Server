@@ -13,8 +13,7 @@ public class WebConfiguration implements WebMvcConfigurer {
             "/api/login",
             "/api/register",
             "/api/common/email/code",
-            "/api/reset",
-            "/api/download"
+            "/api/reset"
     };
 
     // 注册拦截器
@@ -32,7 +31,8 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "http://59.110.163.198:80")
+                .allowedOrigins("http://localhost:3000", "http://59.110.163.198")
+                .allowedOriginPatterns("http://59.110.163.198:*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true);

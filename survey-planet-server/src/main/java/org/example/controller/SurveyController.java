@@ -112,6 +112,10 @@ public class SurveyController {
 
     @PutMapping("/{sid}")
     public Result<Void> modifySurvey(@PathVariable Long sid, @RequestBody CreateSurveyDTO createdSurveyDTO) {
+        if (!createdSurveyDTO.getQuestions().stream().allMatch(QuestionDTO::checkFormat)) {
+            throw new BadQuestionException("BAD_QUESTION");
+        }
+
         surveyService.updateSurvey(sid, createdSurveyDTO);
 
         return Result.success();

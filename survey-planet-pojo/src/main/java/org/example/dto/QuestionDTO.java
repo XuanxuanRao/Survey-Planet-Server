@@ -3,9 +3,14 @@ package org.example.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.entity.question.*;
+import org.example.exception.IllegalRequestException;
+import org.springframework.beans.BeanUtils;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 
 @Data
@@ -103,4 +108,47 @@ public class QuestionDTO {
             default -> false;
         };
     }
+
+    private static final Map<QuestionType, Class<? extends Question>> registry = new HashMap<>();
+
+    static {
+        registry.put(QuestionType.FILL_BLANK, FillBlankQuestion.class);
+        registry.put(QuestionType.FILE, FileQuestion.class);
+        registry.put(QuestionType.SINGLE_CHOICE, SingleChoiceQuestion.class);
+        registry.put(QuestionType.MULTIPLE_CHOICE, MultipleChoiceQuestion.class);
+        registry.put(QuestionType.CODE, CodeQuestion.class);
+    }
+
+    /**
+     * 将 {@link QuestionDTO} 转换为 {@link Question} 实体类
+     * @param questionDTO 要进行转化的 QuestionDTO 对象
+     * @param sid 问题所属问卷 ID
+     * @return {@link Question} 实体类
+     */
+    public Question toQuestionEntity(QuestionDTO questionDTO, Long sid) {
+        QuestionType type = QuestionType.fromString(questionDTO.getType());
+        Class<? extends Question> questionClass = registry.get(type);
+
+        if (questionClass == null) {
+            throw new IllegalRequestException(
+                    QuestionDTO.class + ".createQuestion",
+                    "Invalid question type " + questionDTO.getType()
+            );
+        }
+
+        try {
+            // 使用反射动态创建实例
+            Question question = questionClass.getDeclaredConstructor().newInstance();
+            question.setSid(sid);
+            BeanUtils.copyProperties(questionDTO, question);
+            question.setType(type);
+            return question;
+        } catch (Exception e) {
+            throw new IllegalRequestException(
+                    QuestionDTO.class.getName() + ".createQuestion",
+                    "Error creating question of type " + questionDTO.getType()
+            );
+        }
+    }
+
 }
