@@ -1,7 +1,7 @@
 package org.example.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.Result.Result;
+import org.example.result.Result;
 import org.example.exception.BusinessException;
 import org.example.exception.IllegalRequestException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

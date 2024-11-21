@@ -3,7 +3,7 @@ package org.example.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
-import org.example.Result.PageResult;
+import org.example.result.PageResult;
 import org.example.context.BaseContext;
 import org.example.entity.question.Question;
 import org.example.entity.response.Response;

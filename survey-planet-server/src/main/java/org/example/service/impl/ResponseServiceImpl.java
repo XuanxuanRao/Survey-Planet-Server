@@ -10,7 +10,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.example.Result.PageResult;
+import org.example.result.PageResult;
 import org.example.context.BaseContext;
 import org.example.dto.ResponseDTO;
 import org.example.dto.ResponsePageQueryDTO;

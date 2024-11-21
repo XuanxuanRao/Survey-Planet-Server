@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import org.example.Result.Result;
+import org.example.result.Result;
 import org.example.context.BaseContext;
 import org.example.properties.JwtProperties;
 import org.example.utils.JwtUtil;

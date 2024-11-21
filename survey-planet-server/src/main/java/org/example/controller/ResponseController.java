@@ -2,7 +2,7 @@ package org.example.controller;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.Result.Result;
+import org.example.result.Result;
 import org.example.annotation.ControllerLog;
 import org.example.dto.ResponseDTO;
 import org.example.entity.survey.Survey;

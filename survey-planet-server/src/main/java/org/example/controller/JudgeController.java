@@ -2,7 +2,7 @@ package org.example.controller;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.example.Result.Result;
+import org.example.result.Result;
 import org.example.annotation.ControllerLog;
 import org.example.entity.judge.Judge;
 import org.example.entity.response.Response;

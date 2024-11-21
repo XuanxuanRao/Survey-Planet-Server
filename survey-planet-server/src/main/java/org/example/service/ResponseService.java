@@ -1,7 +1,7 @@
 package org.example.service;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.Result.PageResult;
+import org.example.result.PageResult;
 import org.example.dto.ResponseDTO;
 import org.example.dto.ResponsePageQueryDTO;
 import org.example.entity.response.Response;
