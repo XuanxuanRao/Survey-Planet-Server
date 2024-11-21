@@ -42,7 +42,7 @@ public class JudgeController {
                 .findFirst()
                 .orElseThrow();
 
-        responseService.updateResponse(response.getRid(), List.of(codeItem));
+        responseService.updateResponse(response.getRid(), List.of(codeItem), null);
 
         return Result.success();
     }

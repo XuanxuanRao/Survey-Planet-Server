@@ -1,7 +1,7 @@
 package org.example.service.impl;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,10 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -155,14 +152,18 @@ public class ResponseServiceImpl implements ResponseService {
     @Override
     public PageResult<Response> pageQuery(ResponsePageQueryDTO responsePageQueryDTO) {
         PageHelper.startPage(responsePageQueryDTO.getPageNum(), responsePageQueryDTO.getPageSize());
-        Page<Response> responses = responseMapper.pageQuery(
+        PageInfo<Long> rids = new PageInfo<>(responseMapper.condQuery(
                 responsePageQueryDTO.getSid(),
+                responsePageQueryDTO.getValid(),
                 responsePageQueryDTO.getGradeLb(),
                 responsePageQueryDTO.getGradeUb(),
                 responsePageQueryDTO.getQueryMap(),
                 responsePageQueryDTO.getQueryMap() == null ? 0 : responsePageQueryDTO.getQueryMap().size()
+        ));
+        return new PageResult<>(
+                rids.getTotal(),
+                rids.getTotal() == 0 ? new ArrayList<>() : responseMapper.getByRids(rids.getList())
         );
-        return new PageResult<>(responses.getTotal(), responses.getResult());
     }
 
     @Override
@@ -224,32 +225,52 @@ public class ResponseServiceImpl implements ResponseService {
 
     @Override
     @Transactional
-    public void updateResponse(Long rid, List<ResponseItem> changedItems) {
-        Response response = responseMapper.getByRid(rid);
-        if (response == null) {
-            throw new ResponseNotFoundException("RESPONSE_NOT_FOUND");
-        }
-        Survey survey = surveyMapper.getBySid(response.getSid());
-        if (survey == null || survey.getState() == SurveyState.DELETE) {
-            throw new SurveyNotFoundException("SURVEY_NOT_FOUND");
-        } else if (!Objects.equals(survey.getUid(), BaseContext.getCurrentId()) && !Objects.equals(response.getUid(), BaseContext.getCurrentId())) {
+    public void updateResponse(Long rid, List<ResponseItem> changedItems, Boolean valid) {
+        Response response = Optional.ofNullable(responseMapper.getByRid(rid))
+                .orElseThrow(() -> new ResponseNotFoundException("RESPONSE_NOT_FOUND"));
+
+        Survey survey = Optional.ofNullable(surveyMapper.getBySid(response.getSid()))
+                .filter(s -> s.getState() != SurveyState.DELETE)
+                .orElseThrow(() -> new SurveyNotFoundException("SURVEY_NOT_FOUND"));
+
+        // 校验用户权限
+        Long currentUserId = BaseContext.getCurrentId();
+        final boolean hasPermission = Objects.equals(survey.getUid(), currentUserId)
+                || Objects.equals(response.getUid(), currentUserId);
+        if (!hasPermission) {
             throw new IllegalOperationException("NO_PERMISSION_TO_MODIFY");
         }
 
+        if (valid != null) {
+            response.setValid(valid);
+        }
+
+        if (changedItems != null && !changedItems.isEmpty()) {
+            processChangedItems(rid, survey, response, changedItems);
+        }
+
+        responseMapper.updateResponse(response);
+        if (changedItems != null && !changedItems.isEmpty()) {
+            responseMapper.updateItems(changedItems);
+        }
+    }
+
+    private void processChangedItems(Long rid, Survey survey, Response response, List<ResponseItem> changedItems) {
         if (survey.getType() == SurveyType.EXAM) {
             response.setFinished(false);
         }
 
+        List<Long> existingQids = response.getItems().stream()
+                .map(ResponseItem::getQid)
+                .toList();
+
         changedItems.forEach(item -> {
-            if (response.getItems().stream().filter(i -> i.getQid().equals(item.getQid())).findFirst().isEmpty()) {
+            if (!existingQids.contains(item.getQid())) {
                 throw new QuestionNotFoundException("QUESTION_NOT_FOUND");
             }
             item.setRid(rid);
             item.setUpdateTime(LocalDateTime.now());
         });
-
-        responseMapper.updateResponse(response);
-        responseMapper.updateItems(changedItems);
 
         if (survey.getType() == SurveyType.EXAM) {
             scoringService.reCalcScore(response, changedItems);
@@ -264,6 +285,16 @@ public class ResponseServiceImpl implements ResponseService {
     @Override
     public List<ResponseItem> getResponseItemsBySubmitIds(List<Long> submitIds) {
         return responseMapper.getBySubmitIds(submitIds);
+    }
+
+    @Override
+    public List<Response> getResponseRecordsBySid(Long sid, Boolean valid) {
+        return responseMapper.getRecordsBySid(sid, valid);
+    }
+
+    @Override
+    public List<Response> getResponseRecordsBySid(Long sid) {
+        return responseMapper.getRecordsBySid(sid, null);
     }
 
     private int findQuestionIndex(List<Question> questions, Long qid) {

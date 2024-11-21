@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.Result.Result;
 import org.example.annotation.ControllerLog;
 import org.example.dto.ResponseDTO;
-import org.example.entity.response.ResponseItem;
 import org.example.entity.survey.Survey;
 import org.example.entity.question.Question;
 import org.example.entity.survey.SurveyState;
@@ -85,8 +84,8 @@ public class ResponseController {
 
     @PutMapping("/response/{rid}")
     @ControllerLog(name = "updateResponse", intoDB = true)
-    public Result<Void> update(@PathVariable Long rid, @RequestBody List<ResponseItem> items) {
-        responseService.updateResponse(rid, items);
+    public Result<Void> update(@PathVariable Long rid, @RequestBody ResponseDTO responseDTO) {
+        responseService.updateResponse(rid, responseDTO.getItems(), responseDTO.getValid());
         return Result.success();
     }
 

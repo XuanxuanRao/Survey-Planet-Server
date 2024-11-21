@@ -52,6 +52,10 @@ public class Response {
      * 是否完成批改
      */
     private Boolean finished;
+    /**
+     * 是否有效
+     */
+    private Boolean valid;
 
     /**
      * 将 Response 转换为 ResponseVO

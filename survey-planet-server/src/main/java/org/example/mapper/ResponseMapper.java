@@ -45,8 +45,6 @@ public interface ResponseMapper {
 
     void setItemGrade(Long submitId, Integer grade);
 
-    Page<Response> pageQuery(Long sid, Integer gradeLb, Integer gradeUb, @Param("condition")Map<Long, String> queryMap, int querySize);
-
     List<ResponseItem> getByQid(Long qid);
 
     List<Response> getSidByUid(Long uid);
@@ -59,4 +57,10 @@ public interface ResponseMapper {
     Response getBySubmitId(Long submitId);
 
     List<ResponseItem> getBySubmitIds(List<Long> submitIds);
+
+    List<Response> getRecordsBySid(Long sid, Boolean valid);
+
+    List<Long> condQuery(Long sid, Boolean valid, Integer gradeLb, Integer gradeUb, @Param("condition")Map<Long, String> queryMap, int querySize);
+
+    List<Response> getByRids(List<Long> rids);
 }

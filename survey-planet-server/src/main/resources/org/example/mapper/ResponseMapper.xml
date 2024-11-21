@@ -13,6 +13,7 @@
         <result property="updateTime" column="record_update_time"/>
         <result property="grade" column="surveyGrade"/>
         <result property="finished" column="finished"/>
+        <result property="valid" column="valid"/>
         <collection property="items" ofType="org.example.entity.response.ResponseItem">
             <id property="submitId" column="submit_id"/>
             <result property="rid" column="rid"/>
@@ -58,9 +59,9 @@
         UPDATE response_record
         <set>
             <if test="finished != null">finished = #{finished},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="grade != null">grade = #{grade},</if>
+            <if test="valid != null">valid = #{valid}</if>
         </set>
         WHERE rid = #{rid}
     </update>
@@ -86,7 +87,7 @@
 
 
     <select id="getBySid" parameterType="long" resultMap="responseResultMap">
-        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished, valid,
                submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
         FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
         WHERE sid = #{sid}
@@ -94,44 +95,55 @@
 
 
     <select id="getByUid" parameterType="long" resultMap="responseResultMap">
-        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished, valid,
                submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
         FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
         WHERE uid = #{uid}
     </select>
 
     <select id="getByRid" parameterType="long" resultMap="responseResultMap">
-        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished, valid,
                submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
         FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
         WHERE response_record.rid = #{rid}
     </select>
 
-    <select id="pageQuery" resultMap="responseResultMap">
-        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
-               submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
+    <select id="condQuery" resultType="Long">
+        SELECT response_record.rid FROM response_record
+        <where>
+            sid = #{sid}
+            <if test="valid != null">
+                AND valid = #{valid}
+            </if>
+            <if test="gradeLb != null">
+                AND response_record.grade >= #{gradeLb}
+            </if>
+            <if test="gradeUb != null">
+                AND response_record.grade &lt;= #{gradeUb}
+            </if>
+            <if test="condition != null and !condition.isEmpty()">
+                AND EXISTS (
+                    SELECT 1 FROM response_item ri
+                    WHERE ri.rid = response_record.rid AND
+                    (<foreach collection="condition.entrySet()" item="value" index="key" open="" close="" separator="OR">
+                        ri.qid = #{key}
+                        AND JSON_CONTAINS(content, CONCAT('\"', #{value}, '\"'))
+                    </foreach>)
+                    HAVING COUNT(ri.qid) = #{querySize}
+                )
+            </if>
+        </where>
+    </select>
+
+    <select id="getByRids" resultMap="responseResultMap">
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished, valid,
+        submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
         FROM response_record LEFT JOIN response_item ON response_record.rid = response_item.rid
-        WHERE
-        sid = #{sid}
-        <if test="gradeLb != null">
-            AND response_record.grade >= #{gradeLb}
-        </if>
-        <if test="gradeUb != null">
-            AND response_record.grade &lt;= #{gradeUb}
-        </if>
-        <if test="condition != null and !condition.isEmpty()">
-            AND (
-            SELECT COUNT(0)
-            FROM response_item ri
-            WHERE ri.rid = response_record.rid
-            AND
-            (<foreach collection="condition.entrySet()" item="value" index="key" open="" close="" separator="OR">
-                ri.qid = #{key}
-                AND JSON_CONTAINS(content, CONCAT('\"', #{value}, '\"'))
-            </foreach>)
-            ) = #{querySize}
-        </if>
-        ORDER BY create_time DESC
+        WHERE response_record.rid IN
+        <foreach item="rid" collection="rids" open="(" separator="," close=")">
+            #{rid}
+        </foreach>
+        ORDER BY record_create_time DESC
     </select>
 
     <select id="getByQid" resultMap="responseItemResultMap">
@@ -153,7 +165,7 @@
     </select>
 
     <select id="getBySubmitId" resultMap="responseResultMap">
-        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished,
+        SELECT response_record.rid as rid, sid, uid, response_record.create_time AS record_create_time, response_record.update_time AS record_update_time, response_record.grade as surveyGrade, finished, valid,
                submit_id, qid, content, response_item.grade as questionGrade, response_item.create_time AS item_create_time, response_item.update_time AS item_update_time
         FROM response_record LEFT JOIN response_item on response_record.rid = response_item.rid
         WHERE response_record.rid = (
@@ -172,6 +184,14 @@
         </foreach>
     </select>
 
+    <select id="getRecordsBySid" resultType="org.example.entity.response.Response">
+        SELECT rid, sid, uid, create_time, update_time, grade, finished, valid
+        FROM response_record
+        WHERE sid = #{sid}
+        <if test="valid != null">
+            AND valid = #{valid}
+        </if>
+    </select>
 
 
 </mapper>

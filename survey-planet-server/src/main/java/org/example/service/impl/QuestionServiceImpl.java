@@ -3,7 +3,6 @@ package org.example.service.impl;
 import jakarta.annotation.Resource;
 import org.example.dto.QuestionDTO;
 import org.example.entity.question.*;
-import org.example.exception.BadQuestionException;
 import org.example.mapper.QuestionMapper;
 import org.example.service.QuestionService;
 import org.springframework.stereotype.Service;
@@ -44,18 +43,8 @@ public class QuestionServiceImpl implements QuestionService {
 
         questionList.forEach(question -> {
             switch (question.getType()) {
-                case SINGLE_CHOICE -> {
-                    if (((SingleChoiceQuestion) question).getOptions() == null || ((SingleChoiceQuestion) question).getOptions().isEmpty()) {
-                        throw new BadQuestionException("Single choice question must have options");
-                    }
-                    questionMapper.insertSingleChoiceQuestion((SingleChoiceQuestion) question);
-                }
-                case MULTIPLE_CHOICE -> {
-                    if (((MultipleChoiceQuestion) question).getOptions() == null || ((MultipleChoiceQuestion) question).getOptions().isEmpty()) {
-                        throw new BadQuestionException("Multiple choice question must have options");
-                    }
-                    questionMapper.insertMultipleChoiceQuestion((MultipleChoiceQuestion) question);
-                }
+                case SINGLE_CHOICE -> questionMapper.insertSingleChoiceQuestion((SingleChoiceQuestion) question);
+                case MULTIPLE_CHOICE -> questionMapper.insertMultipleChoiceQuestion((MultipleChoiceQuestion) question);
                 case FILL_BLANK -> questionMapper.insertFillBlankQuestion((FillBlankQuestion) question);
                 case FILE -> questionMapper.insertFileQuestion((FileQuestion) question);
                 case CODE -> questionMapper.insertCodeQuestion((CodeQuestion) question);

@@ -52,9 +52,13 @@ public interface ResponseService {
      * @param rid 提交 ID
      * @param items 更新的题目回答
      */
-    void updateResponse(Long rid, List<ResponseItem> items);
+    void updateResponse(Long rid, List<ResponseItem> items, Boolean valid);
 
     Response getResponseBySubmitId(Long submitId);
 
     List<ResponseItem> getResponseItemsBySubmitIds(List<Long> submitIds);
+
+    List<Response> getResponseRecordsBySid(Long sid, Boolean valid);
+
+    List<Response> getResponseRecordsBySid(Long sid);
 }

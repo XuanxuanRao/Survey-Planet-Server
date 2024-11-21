@@ -18,4 +18,5 @@ import java.util.List;
 public class ResponseDTO {
     private Long sid;
     private List<ResponseItem> items;
+    private Boolean valid;
 }

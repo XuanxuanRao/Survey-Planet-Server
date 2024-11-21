@@ -16,6 +16,7 @@ import java.util.Map;
 public class ResponsePageQueryDTO {
     private Integer pageNum;
     private Integer pageSize;
+    private Boolean valid;
     private Long sid;
     private Integer gradeLb;
     private Integer gradeUb;
