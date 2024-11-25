@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Invitation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+        }
+        h1 {
+            color: #0056b3;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .intro {
+            background-color: #e7f5ff;
+            color: #0056b3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .survey-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #222;
+            margin: 20px 0;
+        }
+        .survey-link {
+            display: inline-block;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .survey-link:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .github-link {
+            margin-top: 15px;
+        }
+        .github-link a {
+            text-decoration: none;
+        }
+        .github-icon {
+            width: 32px;
+            height: 32px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Survey Invitation</h1>
+    <h2>Hello, {{recipient_name}}!</h2>
+    <div class="intro">
+        <p>{{sender_name}} has invited you to complete a/an {{survey_type}} survey on SurveyPlanet!</p>
+        <p class="highlight">{{invitation_message}}</p>
+    </div>
+    <div class="survey-name">{{survey_name}}</div>
+    <a href="{{survey_link}}" class="survey-link">Start the Survey</a>
+    <p>Your feedback is invaluable to us and will help us improve our services.</p>
+    <p>If you have any questions or need assistance, feel free to reach out.</p>
+
+    <footer>
+        Thank you!<br>SurveyPlanet Service Team
+    </footer>
+
+    <div class="github-link">
+        <a href="https://github.com/XuanxuanRao/Survey-Planet" target="_blank">
+            <img src="https://survey-planet-test.oss-cn-beijing.aliyuncs.com/github-logo.png" alt="GitHub" class="github-icon">
+        </a>
+    </div>
+</div>
+</body>
+</html>

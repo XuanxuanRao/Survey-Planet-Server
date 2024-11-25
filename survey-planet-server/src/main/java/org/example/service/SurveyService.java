@@ -1,7 +1,6 @@
 package org.example.service;
 
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import org.example.dto.survey.CreateSurveyDTO;
 import org.example.entity.survey.Survey;
@@ -24,10 +23,11 @@ public interface SurveyService {
 
     /**
      * 打开问卷邀请他人填写，生成填写链接
-     * @param sid
+     * @param sid 问卷id
+     * @param emails 邀请填写的邮箱列表
      * @return 填写链接
      */
-    String shareSurvey(Long sid);
+    String shareSurvey(Long sid, List<String> emails, String invitationMessage);
 
     /**
      * 关闭问卷，停止填写
@@ -47,4 +47,6 @@ public interface SurveyService {
      * @return 删除的问卷数量
      */
     Integer clearSurvey();
+
+    void setNotificationMode(Long sid, Integer mode);
 }

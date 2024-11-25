@@ -1,8 +1,13 @@
 package org.example.utils;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Utility class for encrypting and decrypting long integer IDs using AES encryption.
@@ -16,18 +21,32 @@ public class SharingCodeUtil {
      * @return The encrypted ID as a hexadecimal string
      * @throws Exception If an error occurs during encryption
      */
-    public static String encrypt(Long id) throws Exception {
+    public static String encrypt(Long id) {
         // 创建 AES 密钥
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
 
         // 创建 Cipher 对象
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        }
 
         // 初始化 Cipher 为加密模式
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
 
         // 加密输入文本
-        byte[] encryptedBytes = cipher.doFinal(id.toString().getBytes(StandardCharsets.UTF_8));
+        byte[] encryptedBytes;
+        try {
+            encryptedBytes = cipher.doFinal(id.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            throw new RuntimeException(e);
+        }
 
         // 将加密字节转换为十六进制字符串
         StringBuilder hexString = new StringBuilder();

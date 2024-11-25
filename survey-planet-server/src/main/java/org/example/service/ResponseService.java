@@ -61,4 +61,12 @@ public interface ResponseService {
     List<Response> getResponseRecordsBySid(Long sid, Boolean valid);
 
     List<Response> getResponseRecordsBySid(Long sid);
+
+    /**
+     * 查询最近 time 分钟内的提交
+     * @param time (min)
+     * @return 得到的提交信息，不含 {@link ResponseItem}
+     */
+    List<Response> getRecentResponse(Integer time);
+
 }

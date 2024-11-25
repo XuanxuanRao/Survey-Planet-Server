@@ -20,4 +20,6 @@ public class CreatedSurveyVO extends SurveyVO {
     private LocalDateTime openTime;
     private Integer fillNum;
     private List<CreatedQuestionVO> questions;
+    private String link;
+    private Integer notificationMode;
 }

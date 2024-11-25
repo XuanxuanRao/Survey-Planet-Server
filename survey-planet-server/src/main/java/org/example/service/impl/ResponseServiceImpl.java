@@ -297,6 +297,11 @@ public class ResponseServiceImpl implements ResponseService {
         return responseMapper.getRecordsBySid(sid, null);
     }
 
+    @Override
+    public List<Response> getRecentResponse(Integer time) {
+        return responseMapper.findByCreateTimeRange(LocalDateTime.now().minusMinutes(time), LocalDateTime.now());
+    }
+
     private int findQuestionIndex(List<Question> questions, Long qid) {
         return questions.indexOf(questions.stream().filter(question -> question.getQid().equals(qid)).findFirst().orElseThrow());
     }

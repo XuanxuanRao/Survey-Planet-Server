@@ -193,5 +193,10 @@
         </if>
     </select>
 
+    <select id="findByCreateTimeRange" resultType="org.example.entity.response.Response">
+        SELECT rid, sid, uid, create_time, update_time, grade, finished, valid
+        FROM response_record
+        WHERE create_time BETWEEN #{start} AND #{end}
+    </select>
 
 </mapper>

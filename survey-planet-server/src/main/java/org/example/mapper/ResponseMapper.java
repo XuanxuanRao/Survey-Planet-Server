@@ -1,6 +1,5 @@
 package org.example.mapper;
 
-import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.example.annotation.AutoFill;
@@ -8,6 +7,7 @@ import org.example.entity.response.Response;
 import org.example.entity.response.ResponseItem;
 import org.example.enumeration.OperationType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -63,4 +63,6 @@ public interface ResponseMapper {
     List<Long> condQuery(Long sid, Boolean valid, Integer gradeLb, Integer gradeUb, @Param("condition")Map<Long, String> queryMap, int querySize);
 
     List<Response> getByRids(List<Long> rids);
+
+    List<Response> findByCreateTimeRange(LocalDateTime start, LocalDateTime end);
 }

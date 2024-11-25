@@ -41,7 +41,7 @@ public class LogEntry {
     @Column(name = "method_name")
     private String methodName;
 
-    @Column(name = "result", length = 4095)
+    @Column(name = "result", length = 8191)
     private String result;
 
     @Column(name = "start_time")

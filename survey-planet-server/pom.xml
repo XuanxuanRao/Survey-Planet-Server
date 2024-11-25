@@ -106,6 +106,13 @@
         </dependency>
 
 
+        <!-- Thymeleaf Template Engine -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+
         <!-- 项目间依赖 -->
         <dependency>
             <groupId>org.example</groupId>

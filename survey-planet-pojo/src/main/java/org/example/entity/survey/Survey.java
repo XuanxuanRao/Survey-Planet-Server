@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -25,4 +26,24 @@ public class Survey {
     private Boolean showAnswer;         // 是否允许提交后查看答案
 
     private Boolean allowCover;         // 是否允许覆盖填写
+
+    /**
+     * 通知模式，当问卷有新的填写时，如何通知用户
+     * <p> a 2-bit mask, the first bit represents email, the second bit represents site message.
+     * <p> {@link org.example.constant.NotificationModeConstant} 中定义了具体的通知方式及含义
+     */
+    private Integer notificationMode;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sid);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Survey survey = (Survey) obj;
+        return Objects.equals(sid, survey.sid);
+    }
 }

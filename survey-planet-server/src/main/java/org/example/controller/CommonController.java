@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.example.result.Result;
 import org.example.annotation.ControllerLog;
-import org.example.dto.EmailSendCodeDTO;
+import org.example.dto.email.EmailSendCodeDTO;
 import org.example.service.EmailService;
 import org.example.service.FileService;
 import org.springframework.web.bind.annotation.*;

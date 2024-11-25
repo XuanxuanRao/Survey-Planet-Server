@@ -3,7 +3,6 @@ package org.example.dto.survey;
 import lombok.Data;
 import org.example.dto.QuestionDTO;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -14,4 +13,5 @@ public class CreateSurveyDTO {
     private String description;
     private List<QuestionDTO> questions;
     private Integer timeLimit;
+    private Integer notificationMode;
 }
