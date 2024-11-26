@@ -16,4 +16,5 @@ import java.util.List;
 public class ShareSurveyDTO {
     private List<String> emails;
     private String invitationMessage;
+    private boolean needSiteNotification;
 }

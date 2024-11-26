@@ -137,7 +137,7 @@ public class SurveyController {
      */
     @PostMapping("/{sid}/share")
     public Result<String> shareSurvey(@PathVariable Long sid, @RequestBody ShareSurveyDTO shareSurveyDTO) {
-        return Result.success(surveyService.shareSurvey(sid, shareSurveyDTO.getEmails(), shareSurveyDTO.getInvitationMessage()));
+        return Result.success(surveyService.shareSurvey(sid, shareSurveyDTO));
     }
 
     /**

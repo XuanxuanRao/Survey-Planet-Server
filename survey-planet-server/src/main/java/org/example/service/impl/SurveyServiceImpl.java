@@ -9,7 +9,10 @@ import org.example.context.BaseContext;
 import org.example.dto.email.EmailSendInvitationDTO;
 import org.example.dto.survey.CreateSurveyDTO;
 import org.example.dto.QuestionDTO;
+import org.example.dto.survey.ShareSurveyDTO;
 import org.example.entity.User;
+import org.example.entity.message.InviteMessage;
+import org.example.entity.message.MessageType;
 import org.example.entity.survey.Survey;
 import org.example.entity.question.Question;
 import org.example.entity.survey.SurveyState;
@@ -20,6 +23,7 @@ import org.example.mapper.SurveyMapper;
 import org.example.mapper.UserMapper;
 import org.example.service.QuestionService;
 import org.example.service.ResponseService;
+import org.example.service.SiteMessageService;
 import org.example.service.SurveyService;
 import org.example.utils.SharingCodeUtil;
 import org.example.vo.survey.FilledSurveyVO;
@@ -49,6 +53,9 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private SiteMessageService siteMessageService;
 
     @Override
     public Survey getSurvey(Long sid) {
@@ -113,7 +120,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public String shareSurvey(Long sid, List<String> emails, String invitationMessage) {
+    public String shareSurvey(Long sid, ShareSurveyDTO shareSurveyDTO) {
         Survey survey = getSurvey(sid);
         if (survey == null || survey.getState() == SurveyState.DELETE || !Objects.equals(survey.getUid(), BaseContext.getCurrentId()))
         {
@@ -132,21 +139,32 @@ public class SurveyServiceImpl implements SurveyService {
         }
 
         User sender = userMapper.getById(BaseContext.getCurrentId());
-        if (emails != null && !emails.isEmpty()) {
-            emails.forEach(email -> {
+        if (shareSurveyDTO.getEmails() != null && !shareSurveyDTO.getEmails().isEmpty()) {
+            shareSurveyDTO.getEmails().forEach(email -> {
                 User receiver = userMapper.getByEmail(email);
-                if (receiver == null) {
-                    return;
-                }
                 emailService.sendInvitation(EmailSendInvitationDTO.builder()
                                 .from(sender.getUsername())
-                                .to(receiver.getUsername())
+                                .to(receiver == null ? email.split("@")[0] : receiver.getUsername())
                                 .surveyName(survey.getTitle())
                                 .surveyType(survey.getType() == SurveyType.NORMAL ? "questionnaire" : "exam")
                                 .surveyLink(surveyLink)
-                                .invitationMessage(invitationMessage)
+                                .invitationMessage(shareSurveyDTO.getInvitationMessage())
                                 .email(email)
                                 .build());
+                if (receiver == null) {
+                    return;
+                }
+                if (shareSurveyDTO.isNeedSiteNotification()) {
+                    InviteMessage inviteMessage = InviteMessage.builder()
+                            .senderId(sender.getUid())
+                            .sid(sid)
+                            .invitationMessage(shareSurveyDTO.getInvitationMessage())
+                            .build();
+                    inviteMessage.setReceiverId(receiver.getUid());
+                    inviteMessage.setIsRead(false);
+                    inviteMessage.setType(MessageType.INVITE);
+                    siteMessageService.send(inviteMessage);
+                }
             });
         }
 

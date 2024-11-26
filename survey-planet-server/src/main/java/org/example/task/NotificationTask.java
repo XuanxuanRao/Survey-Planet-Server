@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class MessageTask {
+public class NotificationTask {
 
     @Resource
     private EmailService emailService;
@@ -43,10 +43,9 @@ public class MessageTask {
     @Resource
     private UserService userService;
 
-
     @Scheduled(cron = "0 0 0/12 * * ?")
     public void notifyForNewSubmission() {
-        // 查询30分钟内的提交
+        // 查询 12h 内的提交
         List<Response> responses = responseService.getRecentResponse(12 * 60);
 
         Map<Survey, Pair<Integer, LocalDateTime>> responseInfo = responses.stream()
@@ -109,8 +108,6 @@ public class MessageTask {
         emailNotifyNewSubmissionDTOs.values().forEach(dto -> emailService.sendNotificationForNewSubmission(dto));
 
         log.info("notify for new submission success : {}", emailNotifyNewSubmissionDTOs.values());
-
     }
-
 
 }

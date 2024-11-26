@@ -3,6 +3,7 @@ package org.example.service;
 
 import com.github.pagehelper.PageInfo;
 import org.example.dto.survey.CreateSurveyDTO;
+import org.example.dto.survey.ShareSurveyDTO;
 import org.example.entity.survey.Survey;
 import org.example.entity.survey.SurveyState;
 import org.example.vo.survey.FilledSurveyVO;
@@ -27,7 +28,7 @@ public interface SurveyService {
      * @param emails 邀请填写的邮箱列表
      * @return 填写链接
      */
-    String shareSurvey(Long sid, List<String> emails, String invitationMessage);
+    String shareSurvey(Long sid, ShareSurveyDTO shareSurveyDTO);
 
     /**
      * 关闭问卷，停止填写

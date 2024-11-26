@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 500px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #0056b3;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .message {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .action-button {
+            display: inline-block;
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>New Notification</h1>
+    <p class="message">You have a new update from <span class="highlight">SurveyPlanet</span>.</p>
+    <p class="message">Click the button below to see the details:</p>
+    <a href="{{notification_link}}" class="action-button">View Details</a>
+    <footer>
+        Thank you for being a valued user.<br>SurveyPlanet Team
+    </footer>
+</div>
+</body>
+</html>

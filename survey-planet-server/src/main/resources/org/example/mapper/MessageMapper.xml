@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.example.mapper.MessageMapper">
+
+    <resultMap id="messageResultMap" type="org.example.entity.message.Message">
+        <id property="mid" column="mid"/>
+        <result property="receiverId" column="receiver_uid"/>
+        <result property="type" column="type" typeHandler="org.example.handler.type.MessageTypeHandler"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isRead" column="is_read"/>
+
+        <discriminator column="type" javaType="Integer">
+            <case value="0" resultType="org.example.entity.message.SystemMessage">
+                <result property="content" column="content"/>
+            </case>
+            <case value="1" resultType="org.example.entity.message.InviteMessage">
+                <result property="sid" column="sid"/>
+                <result property="senderId" column="sender_uid"/>
+            </case>
+            <case value="2" resultType="org.example.entity.message.NewSubmissionMessage">
+                <result property="sid" column="sid"/>
+                <result property="rid" column="rid"/>
+            </case>
+        </discriminator>
+    </resultMap>
+
+
+    <select id="getMessageByUid" parameterType="long" resultMap="messageResultMap">
+        SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid
+        FROM message
+        WHERE receiver_uid = #{uid}
+    </select>
+
+    <select id="getUnreadMessageByUid" parameterType="long" resultMap="messageResultMap">
+        SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid
+        FROM message
+        WHERE receiver_uid = #{uid} AND is_read = 0
+    </select>
+
+    <insert id="insertSystemMessage" parameterType="org.example.entity.message.SystemMessage" useGeneratedKeys="true" keyProperty="mid">
+        INSERT INTO message (receiver_uid, type, create_time, update_time, is_read, content)
+        VALUES (#{receiverId}, #{type, typeHandler=org.example.handler.type.MessageTypeHandler}, #{createTime}, #{updateTime}, #{isRead}, #{content})
+    </insert>
+
+    <insert id="insertInviteMessage" parameterType="org.example.entity.message.InviteMessage" useGeneratedKeys="true" keyProperty="mid">
+        INSERT INTO message (receiver_uid, type, create_time, update_time, is_read, sender_uid, sid)
+        VALUES (#{receiverId}, #{type, typeHandler=org.example.handler.type.MessageTypeHandler}, #{createTime}, #{updateTime}, #{isRead}, #{senderId}, #{sid})
+    </insert>
+
+    <insert id="insertNewSubmissionMessage" parameterType="org.example.entity.message.NewSubmissionMessage" useGeneratedKeys="true" keyProperty="mid">
+        INSERT INTO message (receiver_uid, type, create_time, update_time, is_read, sid, rid)
+        VALUES (#{receiverId}, #{type, typeHandler=org.example.handler.type.MessageTypeHandler}, #{createTime}, #{updateTime}, #{isRead}, #{sid}, #{rid})
+    </insert>
+
+</mapper>

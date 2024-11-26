@@ -10,6 +10,9 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.example.constant.NotificationModeConstant;
+import org.example.entity.message.MessageType;
+import org.example.entity.message.NewSubmissionMessage;
 import org.example.result.PageResult;
 import org.example.context.BaseContext;
 import org.example.dto.ResponseDTO;
@@ -27,6 +30,7 @@ import org.example.mapper.SurveyMapper;
 import org.example.service.QuestionService;
 import org.example.service.ResponseService;
 import org.example.service.ScoringService;
+import org.example.service.SiteMessageService;
 import org.example.vo.ResponseItemVO;
 import org.example.vo.ResponseVO;
 import org.springframework.beans.BeanUtils;
@@ -57,6 +61,8 @@ public class ResponseServiceImpl implements ResponseService {
     private ScoringService scoringService;
     @Resource
     private JudgeMapper judgeMapper;
+    @Resource
+    private SiteMessageService siteMessageService;
 
     @Override
     @Transactional
@@ -84,6 +90,17 @@ public class ResponseServiceImpl implements ResponseService {
 
         // 更新填写问卷的人数
         surveyMapper.addFillNum(response.getSid());
+
+        if ((survey.getNotificationMode() & NotificationModeConstant.SITE_MESSAGE) != 0) {
+            NewSubmissionMessage message = NewSubmissionMessage.builder()
+                    .sid(response.getSid())
+                    .rid(response.getRid())
+                    .build();
+            message.setType(MessageType.NEW_SUBMISSION);
+            message.setReceiverId(survey.getUid());
+            message.setIsRead(false);
+            siteMessageService.send(message);
+        }
 
         if (survey.getType() == SurveyType.EXAM) {
             scoringService.calcScore(response);

@@ -19,4 +19,8 @@ public class User {
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     private String avatar;
+    /**
+     * 个人介绍
+     */
+    private String description;
 }
