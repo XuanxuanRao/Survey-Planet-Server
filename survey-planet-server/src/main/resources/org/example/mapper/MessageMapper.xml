@@ -20,6 +20,7 @@
             <case value="1" resultType="org.example.entity.message.InviteMessage">
                 <result property="sid" column="sid"/>
                 <result property="senderId" column="sender_uid"/>
+                <result property="invitationMessage" column="invitation_message"/>
             </case>
             <case value="2" resultType="org.example.entity.message.NewSubmissionMessage">
                 <result property="sid" column="sid"/>
@@ -30,15 +31,21 @@
 
 
     <select id="getMessageByUid" parameterType="long" resultMap="messageResultMap">
-        SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid
+        SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid, invitation_message
         FROM message
         WHERE receiver_uid = #{uid}
     </select>
 
     <select id="getUnreadMessageByUid" parameterType="long" resultMap="messageResultMap">
-        SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid
+        SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid, invitation_message
         FROM message
         WHERE receiver_uid = #{uid} AND is_read = 0
+    </select>
+
+    <select id="getMessageByMid" parameterType="long" resultMap="messageResultMap">
+        SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid, invitation_message
+        FROM message
+        WHERE mid = #{mid}
     </select>
 
     <insert id="insertSystemMessage" parameterType="org.example.entity.message.SystemMessage" useGeneratedKeys="true" keyProperty="mid">
@@ -47,8 +54,8 @@
     </insert>
 
     <insert id="insertInviteMessage" parameterType="org.example.entity.message.InviteMessage" useGeneratedKeys="true" keyProperty="mid">
-        INSERT INTO message (receiver_uid, type, create_time, update_time, is_read, sender_uid, sid)
-        VALUES (#{receiverId}, #{type, typeHandler=org.example.handler.type.MessageTypeHandler}, #{createTime}, #{updateTime}, #{isRead}, #{senderId}, #{sid})
+        INSERT INTO message (receiver_uid, type, create_time, update_time, is_read, sender_uid, sid, invitation_message)
+        VALUES (#{receiverId}, #{type, typeHandler=org.example.handler.type.MessageTypeHandler}, #{createTime}, #{updateTime}, #{isRead}, #{senderId}, #{sid}, #{invitationMessage})
     </insert>
 
     <insert id="insertNewSubmissionMessage" parameterType="org.example.entity.message.NewSubmissionMessage" useGeneratedKeys="true" keyProperty="mid">

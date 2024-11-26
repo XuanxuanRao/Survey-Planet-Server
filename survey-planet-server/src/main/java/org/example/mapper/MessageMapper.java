@@ -1,6 +1,7 @@
 package org.example.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
 import org.example.annotation.AutoFill;
 import org.example.entity.message.InviteMessage;
 import org.example.entity.message.Message;
@@ -16,6 +17,9 @@ import java.util.List;
  */
 @Mapper
 public interface MessageMapper {
+
+    Message getMessageByMid(Long mid);
+
     List<Message> getMessageByUid(Long uid);
 
     List<Message> getUnreadMessageByUid(Long uid);
@@ -28,4 +32,10 @@ public interface MessageMapper {
 
     @AutoFill(OperationType.INSERT)
     Long insertNewSubmissionMessage(NewSubmissionMessage message);
+
+    @Update("update message set is_read = 1 where mid = #{mid}")
+    void setRead(Long mid);
+
+    @Update("update message set is_read = 0 where mid = #{mid}")
+    void setUnread(Long mid);
 }

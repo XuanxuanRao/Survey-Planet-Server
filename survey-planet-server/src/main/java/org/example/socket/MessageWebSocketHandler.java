@@ -1,5 +1,6 @@
 package org.example.socket;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mapper.MessageMapper;
@@ -10,6 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -64,11 +66,12 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
     }
 
 
-    public void sendMessage(Long userId, String message) {
+    public void sendMessage(Long userId, HashMap<String, Object> message) {
         WebSocketSession session = userSessions.get(userId);
         if (session != null && session.isOpen()) {
             try {
-                session.sendMessage(new TextMessage(message));
+                ObjectMapper objectMapper = new ObjectMapper();
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
                 log.info("Sent message to user {}", userId);
             } catch (Exception e) {
                 log.error("Failed to send message to user {}", userId, e);
