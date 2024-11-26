@@ -29,4 +29,5 @@ public class MessageVO {
     private LocalDateTime createTime;
     private LocalDateTime submitTime;
     private String surveyReportLink;
+    private String submitLink;
 }

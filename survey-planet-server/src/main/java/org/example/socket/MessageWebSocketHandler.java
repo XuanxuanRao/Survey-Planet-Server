@@ -41,11 +41,9 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
         int unreadMessageCount = messageMapper.getUnreadMessageByUid(userId).size();
         if (unreadMessageCount > 0) {
-            try {
-                session.sendMessage(new TextMessage("You have " + unreadMessageCount + " unread messages"));
-            } catch (IOException e) {
-                log.error("Failed to send message to user {}", userId, e);
-            }
+            sendMessage(userId, new HashMap<>() {{
+                put("content", "You have " + unreadMessageCount + " unread message(s)!");
+            }});
         }
     }
 
@@ -65,7 +63,12 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
         log.info("User {} disconnected with code {}", userId, status.getCode());
     }
 
-
+    /**
+     * Send message to user
+     * @param userId user id
+     * @param message a hashmap representing the json message object
+     * <p> Key mid is the message id, content is the message content
+     */
     public void sendMessage(Long userId, HashMap<String, Object> message) {
         WebSocketSession session = userSessions.get(userId);
         if (session != null && session.isOpen()) {

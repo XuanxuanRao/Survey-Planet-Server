@@ -3,10 +3,7 @@ package org.example.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
 import org.example.annotation.AutoFill;
-import org.example.entity.message.InviteMessage;
-import org.example.entity.message.Message;
-import org.example.entity.message.NewSubmissionMessage;
-import org.example.entity.message.SystemMessage;
+import org.example.entity.message.*;
 import org.example.enumeration.OperationType;
 
 import java.util.List;
@@ -20,7 +17,7 @@ public interface MessageMapper {
 
     Message getMessageByMid(Long mid);
 
-    List<Message> getMessageByUid(Long uid);
+    List<Message> getMessageByUid(Long uid, Boolean isRead, MessageType type);
 
     List<Message> getUnreadMessageByUid(Long uid);
 

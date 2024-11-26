@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 logs
+src/main/resources/templates/message_*.html
 
 ### STS ###
 .apt_generated

@@ -3,11 +3,9 @@ package org.example.service.impl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.example.constant.LinkConstant;
+import org.example.context.BaseContext;
 import org.example.entity.User;
-import org.example.entity.message.InviteMessage;
-import org.example.entity.message.Message;
-import org.example.entity.message.NewSubmissionMessage;
-import org.example.entity.message.SystemMessage;
+import org.example.entity.message.*;
 import org.example.entity.response.Response;
 import org.example.entity.survey.Survey;
 import org.example.entity.survey.SurveyType;
@@ -23,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -94,6 +93,7 @@ public class SiteMessageServiceImpl implements SiteMessageService {
             Response response = responseMapper.getByRid(newSubmissionMessage.getRid());
             messageVO.setSubmitTime(response.getCreateTime());
             Survey survey = surveyMapper.getBySid(newSubmissionMessage.getSid());
+            messageVO.setSubmitLink(LinkConstant.VIEW_SUBMIT + newSubmissionMessage.getRid());
             messageVO.setSurveyTitle(survey.getTitle());
             messageVO.setSurveyType(survey.getType());
             messageVO.setSurveyReportLink(LinkConstant.ANALYSIS_SURVEY + newSubmissionMessage.getSid());
@@ -109,5 +109,16 @@ public class SiteMessageServiceImpl implements SiteMessageService {
     @Override
     public void setUnread(Long mid) {
         messageMapper.setUnread(mid);
+    }
+
+    @Override
+    public void setRead(Long mid) {
+        messageMapper.setRead(mid);
+    }
+
+    @Override
+    public List<Message> getMessages(Boolean isRead, MessageType type) {
+        Long uid = BaseContext.getCurrentId();
+        return messageMapper.getMessageByUid(uid, isRead, type);
     }
 }
