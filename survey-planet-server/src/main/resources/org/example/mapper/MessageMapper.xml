@@ -45,25 +45,22 @@
         ORDER BY create_time DESC
     </select>
 
-    <select id="getUnreadMessageByUid" parameterType="long" resultMap="messageResultMap">
+    <select id="getMessageByMid" parameterType="long" resultMap="messageResultMap">
+        SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid, invitation_message
+        FROM message
+        WHERE mid = #{mid}
+    </select>
+
+    <select id="getMessages" resultMap="messageResultMap">
         SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid, invitation_message
         FROM message
         <where>
-            receiver_uid = #{uid}
-            <if test="isRead != null">
-                AND is_read = #{isRead}
-            </if>
+            create_time BETWEEN #{startTime} AND #{endTime}
             <if test="type != null">
                 AND type = #{type, typeHandler=org.example.handler.type.MessageTypeHandler}
             </if>
         </where>
         ORDER BY create_time DESC
-    </select>
-
-    <select id="getMessageByMid" parameterType="long" resultMap="messageResultMap">
-        SELECT mid, receiver_uid, type, create_time, update_time, is_read, content, sid, sender_uid, rid, invitation_message
-        FROM message
-        WHERE mid = #{mid}
     </select>
 
     <insert id="insertSystemMessage" parameterType="org.example.entity.message.SystemMessage" useGeneratedKeys="true" keyProperty="mid">

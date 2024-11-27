@@ -10,7 +10,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,7 +38,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
         userSessions.put(userId, session);
         log.info("User {} connected", userId);
 
-        int unreadMessageCount = messageMapper.getUnreadMessageByUid(userId).size();
+        int unreadMessageCount = messageMapper.getMessageByUid(userId, false, null).size();
         if (unreadMessageCount > 0) {
             sendMessage(userId, new HashMap<>() {{
                 put("content", "You have " + unreadMessageCount + " unread message(s)!");

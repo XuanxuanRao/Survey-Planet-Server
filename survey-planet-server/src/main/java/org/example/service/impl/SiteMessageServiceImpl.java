@@ -8,7 +8,7 @@ import org.example.entity.User;
 import org.example.entity.message.*;
 import org.example.entity.response.Response;
 import org.example.entity.survey.Survey;
-import org.example.entity.survey.SurveyType;
+import org.example.exception.MessageNotFoundException;
 import org.example.mapper.MessageMapper;
 import org.example.mapper.ResponseMapper;
 import org.example.mapper.SurveyMapper;
@@ -20,6 +20,7 @@ import org.example.vo.MessageVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -77,8 +78,7 @@ public class SiteMessageServiceImpl implements SiteMessageService {
     public MessageVO getMessage(Long mid) {
         Message message = messageMapper.getMessageByMid(mid);
         if (message == null) {
-            // todo: throw MessageNotFoundException
-            return null;
+            throw new MessageNotFoundException("MESSAGE_NOT_FOUND");
         }
         MessageVO messageVO = new MessageVO();
         BeanUtils.copyProperties(message, messageVO);
@@ -120,5 +120,16 @@ public class SiteMessageServiceImpl implements SiteMessageService {
     public List<Message> getMessages(Boolean isRead, MessageType type) {
         Long uid = BaseContext.getCurrentId();
         return messageMapper.getMessageByUid(uid, isRead, type);
+    }
+
+    @Override
+    public Integer deleteReadMessageOlderThan(int day, MessageType type) {
+        return messageMapper.getMessages(LocalDateTime.MIN, LocalDateTime.now().minusDays(day), type).stream()
+                .filter(Message::getIsRead)
+                .mapToInt(message -> {
+                    messageMapper.deleteMessage(message.getMid());
+                    return 1;
+                })
+                .sum();
     }
 }

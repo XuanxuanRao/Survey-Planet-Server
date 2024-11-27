@@ -1,11 +1,13 @@
 package org.example.mapper;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
 import org.example.annotation.AutoFill;
 import org.example.entity.message.*;
 import org.example.enumeration.OperationType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -18,8 +20,6 @@ public interface MessageMapper {
     Message getMessageByMid(Long mid);
 
     List<Message> getMessageByUid(Long uid, Boolean isRead, MessageType type);
-
-    List<Message> getUnreadMessageByUid(Long uid);
 
     @AutoFill(OperationType.UPDATE)
     Long insertSystemMessage(SystemMessage message);
@@ -35,4 +35,9 @@ public interface MessageMapper {
 
     @Update("update message set is_read = 0 where mid = #{mid}")
     void setUnread(Long mid);
+
+    List<Message> getMessages(LocalDateTime startTime, LocalDateTime endTime, MessageType type);
+
+    @Delete("delete from message where mid = #{mid}")
+    void deleteMessage(Long mid);
 }

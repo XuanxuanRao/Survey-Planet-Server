@@ -10,10 +10,7 @@ import org.example.dto.email.EmailNotifyNewSubmissionDTO;
 import org.example.entity.User;
 import org.example.entity.response.Response;
 import org.example.entity.survey.Survey;
-import org.example.service.EmailService;
-import org.example.service.ResponseService;
-import org.example.service.SurveyService;
-import org.example.service.UserService;
+import org.example.service.*;
 import org.example.utils.SharingCodeUtil;
 import org.example.vo.NewSubmissionVO;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -42,6 +39,9 @@ public class NotificationTask {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private SiteMessageService siteMessageService;
 
     @Scheduled(cron = "0 0 0/12 * * ?")
     public void notifyForNewSubmission() {
@@ -108,6 +108,14 @@ public class NotificationTask {
         emailNotifyNewSubmissionDTOs.values().forEach(dto -> emailService.sendNotificationForNewSubmission(dto));
 
         log.info("notify for new submission success : {}", emailNotifyNewSubmissionDTOs.values());
+    }
+
+    @Scheduled(cron = "0 0 0/48 * * ?")
+    public void notifyForSurveyExpiration() {
+        Integer count = siteMessageService.deleteReadMessageOlderThan(7, null);
+        if (count > 0) {
+            log.info("delete {} read messages older than 7 days", count);
+        }
     }
 
 }
