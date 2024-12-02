@@ -95,6 +95,9 @@ public class QuestionDTO {
         if (inputFileUrls.size() != outputFileUrls.size()) {
             return false;
         }
+        if (timeLimit > 10000 || memoryLimit > 1024 || stackLimit > 512) {
+            return false;
+        }
         return languages != null && !languages.isEmpty();
     }
 
