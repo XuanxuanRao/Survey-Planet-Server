@@ -242,7 +242,7 @@ public class SandboxUtil {
 
         // 设置输入数据
         JSONObject testCaseInput = new JSONObject();
-        // todo: prod 环境下要修改
+        // In our system, the input data is loaded from OSS, so the input data is the content of the file
         if (StringUtils.hasLength(testCaseContent)) {
             testCaseInput.set("content", testCaseContent);
         } else {

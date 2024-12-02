@@ -72,7 +72,6 @@ public class SurveyController {
                     .collect(Collectors.toList()));
         }
 
-        // todo: 按照填写时间降序排列
         else {
             return Result.success(surveyService.getFilledSurveys(BaseContext.getCurrentId(), pageNum, pageSize, sort).getList());
         }
