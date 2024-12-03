@@ -9,6 +9,9 @@ import org.example.entity.response.ResponseItem;
 import org.example.vo.ResponseVO;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,5 +71,14 @@ public interface ResponseService {
      * @return 得到的提交信息，不含 {@link ResponseItem}
      */
     List<Response> getRecentResponse(Integer time);
+
+    /**
+     * 获取问卷在 startDate 和 endDate 内每天的提交数量
+     * @param sid 问卷 ID
+     * @param startDate 统计开始日期
+     * @param endDate 统计结束日期
+     * @return 一个 {@link LinkedHashMap}记录每天的提交数量，key 为日期，value 为提交数量，按照日期升序排列
+     */
+    LinkedHashMap<LocalDate, Long> getResponseCountByDate(Long sid, LocalDateTime startDate, LocalDateTime endDate);
 
 }

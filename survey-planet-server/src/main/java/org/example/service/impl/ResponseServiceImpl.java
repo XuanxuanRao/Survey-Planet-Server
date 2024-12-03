@@ -38,7 +38,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -317,6 +319,20 @@ public class ResponseServiceImpl implements ResponseService {
     @Override
     public List<Response> getRecentResponse(Integer time) {
         return responseMapper.findByCreateTimeRange(LocalDateTime.now().minusMinutes(time), LocalDateTime.now());
+    }
+
+    @Override
+    public LinkedHashMap<LocalDate, Long> getResponseCountByDate(Long sid, LocalDateTime startDate, LocalDateTime endDate) {
+        Map<Date, Object> countMap = responseMapper.countDailyResponse(sid, startDate, endDate);
+        LinkedHashMap<LocalDate, Long> result = new LinkedHashMap<>();
+        for (LocalDate date = startDate.toLocalDate(); !date.isAfter(endDate.toLocalDate()); date = date.plusDays(1)) {
+            Long count = Optional.ofNullable(countMap.get(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())))
+                    .map(entry -> (Map<?, ?>) entry)
+                    .map(entry -> (Long) entry.get("count"))
+                    .orElse(0L);
+            result.put(date, count);
+        }
+        return result;
     }
 
     private int findQuestionIndex(List<Question> questions, Long qid) {

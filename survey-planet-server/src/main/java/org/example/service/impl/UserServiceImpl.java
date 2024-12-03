@@ -115,7 +115,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(User user) {
         user.setUid(BaseContext.getCurrentId());
-        user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
+        if (StringUtils.hasLength(user.getPassword())) {
+            user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
+        }
         userMapper.update(user);
     }
 

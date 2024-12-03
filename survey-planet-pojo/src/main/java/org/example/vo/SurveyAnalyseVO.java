@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * @author chenxuanrao06@gmail.com
@@ -34,4 +36,8 @@ public class SurveyAnalyseVO {
      * 最低分
      */
     private Integer lowestGrade;
+    /**
+     * 过去四个月每天的答卷数
+     */
+    private LinkedHashMap<LocalDate, Long> dailyResponseCount;
 }

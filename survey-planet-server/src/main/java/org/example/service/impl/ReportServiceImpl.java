@@ -18,6 +18,7 @@ import org.example.vo.QuestionAnalyseVO;
 import org.example.vo.SurveyAnalyseVO;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -83,6 +84,6 @@ public class ReportServiceImpl implements ReportService {
                 .mapToLong(entry -> entry.getKey() * entry.getValue())
                 .sum();
         double average = (double) sum / validResponseCount.get();
-        return new SurveyAnalyseVO(validResponseCount.get(), gradeCount, average, highestGrade.get(), lowestGrade.get());
+        return new SurveyAnalyseVO(validResponseCount.get(), gradeCount, average, highestGrade.get(), lowestGrade.get(), responseService.getResponseCountByDate(sid, LocalDateTime.now().minusMonths(4), LocalDateTime.now()));
     }
 }

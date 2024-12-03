@@ -1,13 +1,13 @@
 package org.example.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
 import org.example.annotation.AutoFill;
 import org.example.entity.response.Response;
 import org.example.entity.response.ResponseItem;
 import org.example.enumeration.OperationType;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -65,4 +65,7 @@ public interface ResponseMapper {
     List<Response> getByRids(List<Long> rids);
 
     List<Response> findByCreateTimeRange(LocalDateTime start, LocalDateTime end);
+
+    @MapKey("day")
+    Map<Date, Object> countDailyResponse(Long sid, LocalDateTime start, LocalDateTime end);
 }

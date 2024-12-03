@@ -199,4 +199,11 @@
         WHERE create_time BETWEEN #{start} AND #{end}
     </select>
 
+    <select id="countDailyResponse" resultType="map">
+        SELECT DATE(create_time) AS day, COUNT(0) AS count
+        FROM response_record
+        WHERE sid = #{sid} AND create_time BETWEEN #{start} AND #{end}
+        GROUP BY day
+    </select>
+
 </mapper>
