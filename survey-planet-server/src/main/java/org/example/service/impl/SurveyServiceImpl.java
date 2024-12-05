@@ -21,11 +21,13 @@ import org.example.exception.IllegalOperationException;
 import org.example.exception.SurveyNotFoundException;
 import org.example.mapper.SurveyMapper;
 import org.example.mapper.UserMapper;
+import org.example.result.PageResult;
 import org.example.service.QuestionService;
 import org.example.service.ResponseService;
 import org.example.service.SiteMessageService;
 import org.example.service.SurveyService;
 import org.example.utils.SharingCodeUtil;
+import org.example.vo.survey.CreatedSurveyVO;
 import org.example.vo.survey.FilledSurveyVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -63,27 +66,45 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public List<Survey> getSurveys(Long uid, boolean isCreated, int pageNum, int pageSize, String sortBy) {
-        if (isCreated) {
-            return surveyMapper.getCreatedList(uid, sortBy);
-        }
-        return null;
+    public PageResult<CreatedSurveyVO> getCreatedSurveys(Long uid, int pageNum, int pageSize, String sortBy) {
+        PageHelper.startPage(pageNum, pageSize);
+        var info = new PageInfo<>(surveyMapper.getCreatedList(uid, sortBy));
+        return new PageResult<>(info.getTotal(),
+                info.getList().stream()
+                        .map(s -> {
+                            CreatedSurveyVO vo = CreatedSurveyVO.builder()
+                                    .type(s.getType().getValue())
+                                    .state(s.getState().getValue())
+                                    .build();
+                            BeanUtils.copyProperties(s, vo);
+                            return vo;
+                        })
+                        .collect(Collectors.toList())
+        );
     }
 
     @Override
-    public PageInfo<FilledSurveyVO> getFilledSurveys(Long uid, int pageNum, int pageSize, String sortBy) {
+    public PageResult<FilledSurveyVO> getFilledSurveys(Long uid, int pageNum, int pageSize, String sortBy) {
+        var responses = responseService.querySubmitHistory(uid);
+        if (responses.isEmpty()) {
+            return new PageResult<>(0, List.of());
+        }
         PageHelper.startPage(pageNum, pageSize);
-        var info = responseService.querySubmitHistory(uid);
-        return new PageInfo<>(surveyMapper.list(info.keySet().stream().toList(), sortBy).stream().map(s -> {
-            FilledSurveyVO surveyVO = FilledSurveyVO.builder()
-                    .type(s.getType().getValue())
-                    .state(s.getState().getValue())
-                    .rid(info.get(s.getSid()).getRid())
-                    .submitTime(info.get(s.getSid()).getUpdateTime())
-                    .build();
-            BeanUtils.copyProperties(s, surveyVO);
-            return surveyVO;
-        }).toList());
+        var info = new PageInfo<>(surveyMapper.list(responses.keySet().stream().toList(), sortBy));
+        return new PageResult<>(info.getTotal(),
+                info.getList().stream()
+                        .map(s -> {
+                            FilledSurveyVO vo = FilledSurveyVO.builder()
+                                    .type(s.getType().getValue())
+                                    .state(s.getState().getValue())
+                                    .rid(responses.get(s.getSid()).getRid())
+                                    .submitTime(responses.get(s.getSid()).getUpdateTime())
+                                    .build();
+                            BeanUtils.copyProperties(s, vo);
+                            return vo;
+                        })
+                        .collect(Collectors.toList())
+        );
     }
 
     @Override

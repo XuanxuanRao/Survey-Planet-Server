@@ -6,17 +6,17 @@ import org.example.dto.survey.CreateSurveyDTO;
 import org.example.dto.survey.ShareSurveyDTO;
 import org.example.entity.survey.Survey;
 import org.example.entity.survey.SurveyState;
+import org.example.result.PageResult;
+import org.example.vo.survey.CreatedSurveyVO;
 import org.example.vo.survey.FilledSurveyVO;
-
-import java.util.List;
 
 public interface SurveyService {
 
     Survey getSurvey(Long sid);
 
-    List<Survey> getSurveys(Long uid, boolean isCreated, int pageNum, int pageSize, String sortBy);
+    PageResult<CreatedSurveyVO> getCreatedSurveys(Long uid, int pageNum, int pageSize, String sortBy);
 
-    PageInfo<FilledSurveyVO> getFilledSurveys(Long uid, int pageNum, int pageSize, String sortBy);
+    PageResult<FilledSurveyVO> getFilledSurveys(Long uid, int pageNum, int pageSize, String sortBy);
 
     Survey addSurvey(CreateSurveyDTO surveyDTO);
 
@@ -25,7 +25,7 @@ public interface SurveyService {
     /**
      * 打开问卷邀请他人填写，生成填写链接
      * @param sid 问卷id
-     * @param emails 邀请填写的邮箱列表
+     * @param shareSurveyDTO 发送邀请的信息
      * @return 填写链接
      */
     String shareSurvey(Long sid, ShareSurveyDTO shareSurveyDTO);

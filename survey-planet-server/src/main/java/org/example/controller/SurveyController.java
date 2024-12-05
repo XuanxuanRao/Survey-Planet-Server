@@ -47,11 +47,11 @@ public class SurveyController {
 
     @GetMapping("/list")
     @ControllerLog(name = "getSurveyList")
-    public Result<List<? extends SurveyVO>> getSurveys(
+    public Result<PageResult<? extends SurveyVO>> getSurveys(
             @RequestParam String type,  // 查找创建的问卷或是填写过的问卷
             @RequestParam(defaultValue = "create_time") String sort,
             @RequestParam(defaultValue = "1") Integer pageNum,
-            @RequestParam(defaultValue = "5") Integer pageSize)
+            @RequestParam(defaultValue = "10") Integer pageSize)
     {
         if (!"created".equals(type) && !"filled".equals(type)) {
             throw new IllegalRequestException("", "Invalid type " + type);
@@ -61,19 +61,9 @@ public class SurveyController {
         }
 
         if ("created".equals(type)) {
-            return Result.success(surveyService.getSurveys(BaseContext.getCurrentId(), true, pageNum, pageSize, sort).stream().map(s -> {
-                        CreatedSurveyVO surveyVO = CreatedSurveyVO.builder()
-                                .type(s.getType().getValue())
-                                .state(s.getState().getValue())
-                                .build();
-                        BeanUtils.copyProperties(s, surveyVO);
-                        return surveyVO;
-                    })
-                    .collect(Collectors.toList()));
-        }
-
-        else {
-            return Result.success(surveyService.getFilledSurveys(BaseContext.getCurrentId(), pageNum, pageSize, sort).getList());
+            return Result.success(surveyService.getCreatedSurveys(BaseContext.getCurrentId(), pageNum, pageSize, sort));
+        } else {
+            return Result.success(surveyService.getFilledSurveys(BaseContext.getCurrentId(), pageNum, pageSize, sort));
         }
     }
 
