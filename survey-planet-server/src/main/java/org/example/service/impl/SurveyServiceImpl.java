@@ -215,27 +215,6 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    @Transactional
-    public Integer clearSurvey() {
-        // 首先获取所有已删除的问卷
-        List<Survey> surveys = surveyMapper.getDeletedList();
-        if (surveys.isEmpty()) {
-            return 0;
-        }
-        // 然后删除与这些问卷关联的回答
-        // todo: if the question's type is CODE, we should deleted the information from judge and judge_case
-        surveys.forEach(survey -> {
-            responseService.deleteBySid(survey.getSid());
-        });
-        // 然后删除与这些问卷关联的问题
-        surveys.forEach(survey -> {
-            questionService.deleteQuestions(questionService.getBySid(survey.getSid()));
-        });
-        // 最后删除问卷
-        return surveyMapper.delete(surveys.stream().map(Survey::getSid).toList());
-    }
-
-    @Override
     public void setNotificationMode(Long sid, Integer mode) {
         Survey survey = getSurvey(sid);
         if (survey == null || !Objects.equals(survey.getUid(), BaseContext.getCurrentId())) {

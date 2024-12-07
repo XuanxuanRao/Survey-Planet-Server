@@ -132,4 +132,9 @@ public class SiteMessageServiceImpl implements SiteMessageService {
                 })
                 .sum();
     }
+
+    @Override
+    public void deleteMessage(Long mid) {
+        messageMapper.deleteMessage(mid);
+    }
 }

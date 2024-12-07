@@ -1,7 +1,6 @@
 package org.example.service;
 
 
-import com.github.pagehelper.PageInfo;
 import org.example.dto.survey.CreateSurveyDTO;
 import org.example.dto.survey.ShareSurveyDTO;
 import org.example.entity.survey.Survey;
@@ -42,12 +41,6 @@ public interface SurveyService {
      * @param state 要设置的状态
      */
     void modifyState(Long sid, SurveyState state);
-
-    /**
-     * 删除问卷（问卷状态被标记为 {@link SurveyState}{@code .delete}）
-     * @return 删除的问卷数量
-     */
-    Integer clearSurvey();
 
     void setNotificationMode(Long sid, Integer mode);
 }

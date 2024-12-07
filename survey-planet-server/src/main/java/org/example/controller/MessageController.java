@@ -41,4 +41,15 @@ public class MessageController {
         return Result.success(siteMessageService.getMessages(isRead, type));
     }
 
+    /**
+     * 删除消息
+     * @param mid 要删除的消息 ID
+     * @return Result, 无数据
+     */
+    @DeleteMapping("/{mid}")
+    public Result<Void> deleteMessage(@PathVariable Long mid) {
+        siteMessageService.deleteMessage(mid);
+        return Result.success();
+    }
+
 }

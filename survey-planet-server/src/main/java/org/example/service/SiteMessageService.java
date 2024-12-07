@@ -16,4 +16,9 @@ public interface SiteMessageService {
     void setRead(Long mid);
     List<Message> getMessages(Boolean isRead, MessageType type);
     Integer deleteReadMessageOlderThan(int day, MessageType type);
+    /**
+     * 从数据库中删除消息
+     * @param mid 要删除的消息 ID
+     */
+    void deleteMessage(Long mid);
 }

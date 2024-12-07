@@ -75,6 +75,8 @@ public class ResponseServiceImpl implements ResponseService {
             throw new SurveyNotFoundException("SURVEY_NOT_FOUND");
         } else if (survey.getState() == SurveyState.CLOSE) {
             throw new IllegalOperationException("SURVEY_CLOSED");
+        } else if (!questionService.getBySid(survey.getSid()).stream().allMatch(q -> !q.getRequired() || responseDTO.getItems().stream().anyMatch(item -> item.getQid().equals(q.getQid())))) {
+            throw new BadResponseException("MISSING_REQUIRED_QUESTION");
         }
 
         Response response = new Response();

@@ -21,7 +21,7 @@ public interface MessageMapper {
 
     List<Message> getMessageByUid(Long uid, Boolean isRead, MessageType type);
 
-    @AutoFill(OperationType.UPDATE)
+    @AutoFill(OperationType.INSERT)
     Long insertSystemMessage(SystemMessage message);
 
     @AutoFill(OperationType.INSERT)
@@ -30,10 +30,10 @@ public interface MessageMapper {
     @AutoFill(OperationType.INSERT)
     Long insertNewSubmissionMessage(NewSubmissionMessage message);
 
-    @Update("update message set is_read = 1 where mid = #{mid}")
+    @Update("update message set is_read = 1, update_time = now() where mid = #{mid}")
     void setRead(Long mid);
 
-    @Update("update message set is_read = 0 where mid = #{mid}")
+    @Update("update message set is_read = 0, update_time = now() where mid = #{mid}")
     void setUnread(Long mid);
 
     List<Message> getMessages(LocalDateTime startTime, LocalDateTime endTime, MessageType type);

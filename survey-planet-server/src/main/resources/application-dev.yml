@@ -30,7 +30,7 @@ survey-planet:
 
   # go-judge 配置
   go-judge:
-    baseUrl: http://59.110.163.198:5051
+    baseUrl: http://localhost:5050
     maxProcessNumber: 128
     memoryLimitMb: 512
     stackLimitMb: 128

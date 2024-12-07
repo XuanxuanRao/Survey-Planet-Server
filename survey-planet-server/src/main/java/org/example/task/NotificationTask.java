@@ -104,8 +104,11 @@ public class NotificationTask {
         log.info("notify for new submission success : {}", emailNotifyNewSubmissionDTOs.values());
     }
 
-    @Scheduled(cron = "0 0 0/48 * * ?")
-    public void notifyForSurveyExpiration() {
+    /**
+     *
+     */
+    @Scheduled(cron = "0 0 0/24 * * ?")
+    public void clearMessage() {
         Integer count = siteMessageService.deleteReadMessageOlderThan(7, null);
         if (count > 0) {
             log.info("delete {} read messages older than 7 days", count);
