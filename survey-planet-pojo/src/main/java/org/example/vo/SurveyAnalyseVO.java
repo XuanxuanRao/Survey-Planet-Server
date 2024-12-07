@@ -1,6 +1,7 @@
 package org.example.vo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.LinkedHashMap;
  * @author chenxuanrao06@gmail.com
  * @Description:
  */
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +21,7 @@ public class SurveyAnalyseVO {
     /**
      * 有效答卷数
      */
-    private Long validResponseCount;
+    private Long totalValidResponse;
     /**
      * 得分分布
      */

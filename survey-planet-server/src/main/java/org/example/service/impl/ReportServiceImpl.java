@@ -66,7 +66,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         List<Response> responses = responseService.getResponseRecordsBySid(sid, true);
-        AtomicLong validResponseCount = new AtomicLong();
+        AtomicLong totalValidResponse = new AtomicLong();
         HashMap<Integer, Long> gradeCount = new HashMap<>();
         AtomicInteger highestGrade = new AtomicInteger(Integer.MIN_VALUE);
         AtomicInteger lowestGrade = new AtomicInteger(Integer.MAX_VALUE);
@@ -74,7 +74,7 @@ public class ReportServiceImpl implements ReportService {
             if (response.getGrade() == null) {
                 return;
             }
-            validResponseCount.getAndIncrement();
+            totalValidResponse.getAndIncrement();
             highestGrade.set(Math.max(highestGrade.get(), response.getGrade()));
             lowestGrade.set(Math.min(lowestGrade.get(), response.getGrade()));
             gradeCount.put(response.getGrade(), gradeCount.getOrDefault(response.getGrade(), 0L) + 1);
@@ -83,7 +83,15 @@ public class ReportServiceImpl implements ReportService {
         long sum = gradeCount.entrySet().stream()
                 .mapToLong(entry -> entry.getKey() * entry.getValue())
                 .sum();
-        double average = (double) sum / validResponseCount.get();
-        return new SurveyAnalyseVO(validResponseCount.get(), gradeCount, average, highestGrade.get(), lowestGrade.get(), responseService.getResponseCountByDate(sid, LocalDateTime.now().minusMonths(4), LocalDateTime.now()));
+        double average = (double) sum / totalValidResponse.get();
+
+        return SurveyAnalyseVO.builder()
+                .totalValidResponse(totalValidResponse.get())
+                .gradeCount(gradeCount)
+                .averageGrade(average)
+                .highestGrade(highestGrade.get())
+                .lowestGrade(lowestGrade.get())
+                .dailyResponseCount(responseService.getResponseCountByDate(sid, LocalDateTime.now().minusMonths(4), LocalDateTime.now()))
+                .build();
     }
 }

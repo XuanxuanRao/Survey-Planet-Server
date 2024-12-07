@@ -50,6 +50,18 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendVerificationCode(EmailSendCodeDTO emailSendCodeDTO) {
+        if (REGISTER.equals(emailSendCodeDTO.getType()) && userService.getByEmail(emailSendCodeDTO.getEmail()) != null) {
+            throw new IllegalRequestException(
+                    EmailService.class.getName() + ".sendVerificationCode()",
+                    "Email already registered: " + emailSendCodeDTO.getEmail()
+            );
+        } else if (RESET.equals(emailSendCodeDTO.getType()) && userService.getByEmail(emailSendCodeDTO.getEmail()) == null) {
+            throw new IllegalRequestException(
+                    EmailService.class.getName() + ".sendVerificationCode()",
+                    "Email not registered: " + emailSendCodeDTO.getEmail()
+            );
+        }
+
         String subject = "Verification code";
         String code = String.valueOf(new Random().nextInt(899999) + 100000);
 
