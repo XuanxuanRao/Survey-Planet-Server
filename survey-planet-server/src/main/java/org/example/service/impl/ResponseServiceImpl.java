@@ -92,9 +92,6 @@ public class ResponseServiceImpl implements ResponseService {
         response.getItems().forEach(item -> item.setRid(response.getRid()));
         responseMapper.insertItems(response.getItems());
 
-        // 更新填写问卷的人数
-        surveyMapper.addFillNum(response.getSid());
-
         if ((survey.getNotificationMode() & NotificationModeConstant.SITE_MESSAGE) != 0) {
             NewSubmissionMessage message = NewSubmissionMessage.builder()
                     .sid(response.getSid())
@@ -183,7 +180,7 @@ public class ResponseServiceImpl implements ResponseService {
         ));
         return new PageResult<>(
                 rids.getTotal(),
-                rids.getTotal() == 0 ? new ArrayList<>() : responseMapper.getByRids(rids.getList())
+                rids.getList().isEmpty() ? new ArrayList<>() : responseMapper.getByRids(rids.getList())
         );
     }
 
