@@ -6,7 +6,7 @@
 <mapper namespace="org.example.mapper.SurveyMapper">
 
     <resultMap id="surveyResultMap" type="org.example.entity.survey.Survey">
-        <result property="sid" column="sid"/>
+        <id property="sid" column="sid"/>
         <result property="uid" column="uid"/>
         <result property="title" column="title"/>
         <result property="description" column="description"/>

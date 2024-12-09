@@ -21,7 +21,7 @@ survey-planet:
     host: smtp.gmail.com
     port: 465
     username: surveyplanetservice@gmail.com
-    password: efphdphbckztlqsg
+    password: rvjbmmmsckwuwchn
     protocol: smtp
     properties:
       mail.smtp.auth: true

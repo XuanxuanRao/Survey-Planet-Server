@@ -6,7 +6,7 @@
 <mapper namespace="org.example.mapper.QuestionMapper">
 
     <resultMap id="questionResultMap" type="org.example.entity.question.Question">
-        <result property="qid" column="qid"/>
+        <id property="qid" column="qid"/>
         <result property="sid" column="sid"/>
         <result property="title" column="title"/>
         <result property="description" column="description"/>

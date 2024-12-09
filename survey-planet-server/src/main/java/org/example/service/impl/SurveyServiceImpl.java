@@ -75,6 +75,7 @@ public class SurveyServiceImpl implements SurveyService {
                             CreatedSurveyVO vo = CreatedSurveyVO.builder()
                                     .type(s.getType().getValue())
                                     .state(s.getState().getValue())
+                                    .link(LinkConstant.FILL_SURVEY + SharingCodeUtil.encrypt(s.getSid()))
                                     .build();
                             BeanUtils.copyProperties(s, vo);
                             return vo;

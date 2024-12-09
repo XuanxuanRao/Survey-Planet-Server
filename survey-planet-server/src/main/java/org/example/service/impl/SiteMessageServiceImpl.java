@@ -50,7 +50,7 @@ public class SiteMessageServiceImpl implements SiteMessageService {
     @Override
     public void send(InviteMessage message) {
         messageMapper.insertInviteMessage(message);
-        messageWebSocketHandler.sendMessage(message.getSenderId(), new HashMap<>() {{
+        messageWebSocketHandler.sendMessage(message.getReceiverId(), new HashMap<>() {{
             put("mid", message.getMid());
             put("content", message.toText());
         }});
