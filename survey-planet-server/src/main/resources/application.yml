@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: prod
 
   main:
     allow-circular-references: true
@@ -35,9 +35,19 @@ spring:
     password: ${survey-planet.mail.password}
     protocol: ${survey-planet.mail.protocol}
     properties:
-      mail.smtp.auth: ${survey-planet.mail.properties.mail.smtp.auth}
-      mail.smtp.starttls.enable: ${survey-planet.mail.properties.mail.smtp.starttls.enable}
-      mail.smtp.ssl.enable: ${survey-planet.mail.properties.mail.smtp.ssl.enable}
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+            required: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+
 
 
 mybatis:

@@ -102,11 +102,14 @@ public class QuestionDTO {
     }
 
     public boolean checkFormat() {
+        if (title == null || title.isEmpty() || type == null || type.isEmpty()) {
+            return false;
+        }
         return switch (type) {
             case "single_choice" -> checkSingleChoice();
             case "multiple_choice" -> checkMultipleChoice();
             case "fill_blank" -> checkFillBlank();
-            case "file" -> getScore() == null || getAnswer() == null;
+            case "file" -> getScore() == null || getAnswer() == null || (getMaxFileSize() > 0 && getMaxFileSize() <= 20);
             case "code" -> checkCode();
             default -> false;
         };

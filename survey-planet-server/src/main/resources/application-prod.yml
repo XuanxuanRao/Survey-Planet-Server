@@ -2,11 +2,11 @@ survey-planet:
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    host: rm-2zevu9knfs3k96s7xyo.mysql.rds.aliyuncs.com
+    host: 120.46.3.97
     port: 3306
-    database: dev
-    username: survey_planet_service
-    password: rcx2206!
+    database: h_db22373053
+    username: u22373053
+    password: Aa923051
 
   aliyun:
     # 阿里云OSS配置

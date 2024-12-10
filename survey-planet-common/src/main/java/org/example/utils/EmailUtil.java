@@ -7,6 +7,8 @@ import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 
 @Slf4j
 public class EmailUtil {
@@ -22,6 +24,11 @@ public class EmailUtil {
      * @param subject email subject
      * @param htmlContent email content in HTML format
      */
+    @Retryable(
+            value = MailSendException.class,
+            maxAttempts = 2,
+            backoff = @Backoff(delay = 500)
+    )
     public void sendEmail(String to, String subject, String htmlContent) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
@@ -29,6 +36,7 @@ public class EmailUtil {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true); // true表示发送HTML邮件
+            helper.setFrom("surveyplanet@163.com");
             mailSender.send(message);
             log.info("Sent email to {} successfully", to);
         } catch (MailAuthenticationException e) {
@@ -42,5 +50,6 @@ public class EmailUtil {
             throw new RuntimeException("Unexpected error occurred while sending email");
         }
     }
+
 
 }

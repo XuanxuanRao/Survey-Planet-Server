@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.example.constant.LinkConstant;
 import org.example.dto.survey.ShareSurveyDTO;
+import org.example.exception.BadSurveyException;
 import org.example.result.PageResult;
 import org.example.result.Result;
 import org.example.annotation.ControllerLog;
@@ -15,7 +16,6 @@ import org.example.entity.response.Response;
 import org.example.entity.survey.Survey;
 import org.example.entity.question.Question;
 import org.example.entity.survey.SurveyState;
-import org.example.exception.BadQuestionException;
 import org.example.exception.IllegalRequestException;
 import org.example.exception.SurveyNotFoundException;
 import org.example.service.QuestionService;
@@ -92,9 +92,7 @@ public class SurveyController {
     @PostMapping("/add")
     @Transactional
     public Result<Long> createSurvey(@RequestBody CreateSurveyDTO createdSurveyDTO) {
-        if (!createdSurveyDTO.getQuestions().stream().allMatch(QuestionDTO::checkFormat)) {
-            throw new BadQuestionException("BAD_QUESTION");
-        }
+        checkSurveyFormat(createdSurveyDTO);
 
         Long sid = surveyService.addSurvey(createdSurveyDTO).getSid();
         questionService.addQuestions(createdSurveyDTO.getQuestions(), sid);
@@ -104,13 +102,20 @@ public class SurveyController {
 
     @PutMapping("/{sid}")
     public Result<Void> modifySurvey(@PathVariable Long sid, @RequestBody CreateSurveyDTO createdSurveyDTO) {
-        if (!createdSurveyDTO.getQuestions().stream().allMatch(QuestionDTO::checkFormat)) {
-            throw new BadQuestionException("BAD_QUESTION");
-        }
+        checkSurveyFormat(createdSurveyDTO);
 
         surveyService.updateSurvey(sid, createdSurveyDTO);
 
         return Result.success();
+    }
+
+    private void checkSurveyFormat(CreateSurveyDTO createdSurveyDTO) {
+        if (createdSurveyDTO.getTitle() == null || createdSurveyDTO.getTitle().isEmpty()) {
+            throw new BadSurveyException("NO_TITLE");
+        }
+        if (!createdSurveyDTO.getQuestions().stream().allMatch(QuestionDTO::checkFormat)) {
+            throw new BadSurveyException("QUESTION_FORMAT_ERROR");
+        }
     }
 
     @PutMapping("/{sid}/notify")
