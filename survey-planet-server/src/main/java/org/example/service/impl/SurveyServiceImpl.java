@@ -120,6 +120,17 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
+    public Survey addSurvey(CreateSurveyDTO surveyDTO, Long uid) {
+        Survey survey = new Survey();
+        BeanUtils.copyProperties(surveyDTO, survey);
+        survey.setUid(uid);
+        survey.setType(SurveyType.fromString(surveyDTO.getType()));
+        surveyMapper.insert(survey);
+
+        return survey;
+    }
+
+    @Override
     @Transactional
     public void updateSurvey(Long sid, CreateSurveyDTO createSurveyDTO) {
         Survey survey = getSurvey(sid);

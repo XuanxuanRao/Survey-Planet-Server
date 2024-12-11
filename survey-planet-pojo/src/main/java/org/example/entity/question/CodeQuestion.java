@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.dto.QuestionDTO;
 import org.example.entity.response.ResponseItem;
 import org.example.vo.QuestionAnalyseVO;
+import org.springframework.beans.BeanUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -73,5 +75,12 @@ public class CodeQuestion extends Question {
         questionAnalyseVO.setTotal(total);
         questionAnalyseVO.setGradeCount(gradeCount);
         return questionAnalyseVO;
+    }
+
+    @Override
+    public QuestionDTO toQuestionDTO() {
+        var res = super.toQuestionDTO();
+        BeanUtils.copyProperties(this, res);
+        return res;
     }
 }

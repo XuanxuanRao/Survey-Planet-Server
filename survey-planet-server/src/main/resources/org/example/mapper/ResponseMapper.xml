@@ -155,13 +155,14 @@
 
     <select id="getSidByUid" resultType="org.example.entity.response.Response">
         SELECT sid, rid, update_time
-        FROM response_record
-        WHERE uid = #{uid} AND update_time = (
-            SELECT MAX(t2.update_time)
-            FROM response_record t2
-            WHERE t2.sid = response_record.sid
-        )
-        ORDER BY update_time DESC
+        FROM (
+                 SELECT sid, rid, update_time,
+                        ROW_NUMBER() OVER (PARTITION BY sid, uid ORDER BY update_time DESC) AS rn
+                 FROM response_record
+                 WHERE uid = #{uid}
+             ) AS ranked
+        WHERE rn = 1
+        ORDER BY update_time DESC;
     </select>
 
     <select id="getBySubmitId" resultMap="responseResultMap">

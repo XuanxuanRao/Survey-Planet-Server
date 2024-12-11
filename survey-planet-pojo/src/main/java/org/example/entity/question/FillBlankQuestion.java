@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.dto.QuestionDTO;
 import org.example.entity.response.ResponseItem;
 import org.example.vo.QuestionAnalyseVO;
 
@@ -51,5 +52,12 @@ public class FillBlankQuestion extends Question {
         questionAnalyseVO.setGradeCount(gradeCount);
         questionAnalyseVO.setWordCloud(wordFrequency);
         return questionAnalyseVO;
+    }
+
+    @Override
+    public QuestionDTO toQuestionDTO() {
+        var res = super.toQuestionDTO();
+        res.setAnswer(new ArrayList<>(answer));
+        return res;
     }
 }

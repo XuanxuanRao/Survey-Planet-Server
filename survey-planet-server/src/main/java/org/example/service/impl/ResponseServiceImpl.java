@@ -134,7 +134,7 @@ public class ResponseServiceImpl implements ResponseService {
 
         Survey survey = surveyMapper.getBySid(response.getSid());
         if (!Objects.equals(response.getUid(), BaseContext.getCurrentId()) && !Objects.equals(survey.getUid(), BaseContext.getCurrentId())) {
-            throw new IllegalOperationException();
+            throw new IllegalOperationException("NO_PERMISSION_TO_VIEW");
         } else if (!response.getFinished()) {
             throw new ResponseNotFinishedException("SUBMIT_IS_BEEN_PROCESSED");
         }
@@ -155,7 +155,9 @@ public class ResponseServiceImpl implements ResponseService {
             }
             return itemVO;
         }).toList();
-        return response.toVO(itemsVO, survey.getShowAnswer());
+        ResponseVO res = response.toVO(itemsVO, survey.getShowAnswer());
+        res.setType(survey.getType().getValue());
+        return res;
     }
 
     @Override

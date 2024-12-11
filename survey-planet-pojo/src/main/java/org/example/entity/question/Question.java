@@ -3,6 +3,7 @@ package org.example.entity.question;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.dto.QuestionDTO;
 import org.example.entity.response.ResponseItem;
 import org.example.vo.QuestionAnalyseVO;
 import org.example.vo.question.CreatedQuestionVO;
@@ -36,6 +37,13 @@ public class Question {
         questionVO.setType(this.getType().getValue());
         BeanUtils.copyProperties(this, questionVO);
         return questionVO;
+    }
+
+    public QuestionDTO toQuestionDTO() {
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(this, questionDTO);
+        questionDTO.setType(this.getType().getValue());
+        return questionDTO;
     }
 
     public QuestionAnalyseVO analyse(List<ResponseItem> responseItems) {

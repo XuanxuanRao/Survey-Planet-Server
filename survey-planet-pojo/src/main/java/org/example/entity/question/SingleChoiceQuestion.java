@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.dto.QuestionDTO;
 import org.example.entity.response.ResponseItem;
 import org.example.vo.QuestionAnalyseVO;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,5 +47,13 @@ public class SingleChoiceQuestion extends Question {
         questionAnalyseVO.setAnswerCount(answerCount);
         questionAnalyseVO.setGradeCount(gradeCount);
         return questionAnalyseVO;
+    }
+
+    @Override
+    public QuestionDTO toQuestionDTO() {
+        var res = super.toQuestionDTO();
+        if (options != null)    res.setOptions(new ArrayList<>(options));
+        if (answer != null)     res.setAnswer(new ArrayList<>(answer));
+        return res;
     }
 }

@@ -19,6 +19,8 @@ public interface SurveyService {
 
     Survey addSurvey(CreateSurveyDTO surveyDTO);
 
+    Survey addSurvey(CreateSurveyDTO surveyDTO, Long uid);
+
     void updateSurvey(Long sid, CreateSurveyDTO createdSurveyDTO);
 
     /**

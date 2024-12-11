@@ -48,4 +48,5 @@ public class ResponseVO {
      * 是否完成批改
      */
     private Boolean finished;
+    private String type;
 }
