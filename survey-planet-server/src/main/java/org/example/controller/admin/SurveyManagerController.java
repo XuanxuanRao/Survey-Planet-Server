@@ -1,6 +1,7 @@
 package org.example.controller.admin;
 
 import jakarta.annotation.Resource;
+import org.example.constant.NotificationModeConstant;
 import org.example.dto.QuestionDTO;
 import org.example.dto.survey.CreateSurveyDTO;
 import org.example.entity.question.Question;
@@ -54,10 +55,10 @@ public class SurveyManagerController {
         CreateSurveyDTO createSurveyDTO = new CreateSurveyDTO();
         createSurveyDTO.setTitle(title);
         createSurveyDTO.setType(survey.getType().toString());
-        createSurveyDTO.setNotificationMode(0);
-        Long resId = surveyService.addSurvey(createSurveyDTO, uid).getSid();
+        createSurveyDTO.setNotificationMode(NotificationModeConstant.NONE);
+        Long copyId = surveyService.addSurvey(createSurveyDTO, uid).getSid();
         List<QuestionDTO> questions = questionService.getBySid(sid).stream().map(Question::toQuestionDTO).toList();
-        questionService.addQuestions(questions, resId);
+        questionService.addQuestions(questions, copyId);
         return Result.success();
     }
 

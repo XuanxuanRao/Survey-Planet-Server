@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.example.constant.LinkConstant;
+import org.example.constant.NotificationModeConstant;
 import org.example.dto.survey.ShareSurveyDTO;
 import org.example.exception.BadSurveyException;
 import org.example.result.PageResult;
@@ -98,6 +99,26 @@ public class SurveyController {
         questionService.addQuestions(createdSurveyDTO.getQuestions(), sid);
 
         return Result.success(sid);
+    }
+
+    @PostMapping("/clone")
+    @Transactional
+    public Result<Long> cloneSurvey(@RequestParam Long sid) {
+        Survey survey = surveyService.getSurvey(sid);
+        if (survey == null || !Objects.equals(survey.getUid(), BaseContext.getCurrentId())) {
+            throw new SurveyNotFoundException("SURVEY_NOT_FOUND");
+        }
+
+        CreateSurveyDTO surveyDTO = new CreateSurveyDTO();
+        BeanUtils.copyProperties(survey, surveyDTO);
+        surveyDTO.setNotificationMode(NotificationModeConstant.NONE);
+        surveyDTO.setType(survey.getType().getValue());
+        surveyDTO.setTitle(survey.getTitle() + "-副本");
+
+        Long copyId = surveyService.addSurvey(surveyDTO).getSid();
+        questionService.addQuestions(questionService.getBySid(sid).stream().map(Question::toQuestionDTO).collect(Collectors.toList()), copyId);
+
+        return Result.success(copyId);
     }
 
     @PutMapping("/{sid}")
