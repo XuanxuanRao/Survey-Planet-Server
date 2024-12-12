@@ -13,9 +13,11 @@ import org.springframework.retry.annotation.Retryable;
 @Slf4j
 public class EmailUtil {
     private final JavaMailSender mailSender;
+    private final String email;
 
-    public EmailUtil(JavaMailSender mailSender) {
+    public EmailUtil(JavaMailSender mailSender, String email) {
         this.mailSender = mailSender;
+        this.email = email;
     }
 
     /**
@@ -36,7 +38,7 @@ public class EmailUtil {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true); // true表示发送HTML邮件
-            helper.setFrom("surveyplanet@163.com");
+            helper.setFrom(email);
             mailSender.send(message);
             log.info("Sent email to {} successfully", to);
         } catch (MailAuthenticationException e) {

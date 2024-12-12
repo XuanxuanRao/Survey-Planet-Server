@@ -11,6 +11,7 @@ import org.example.service.EmailService;
 import org.example.service.UserService;
 import org.example.service.VerificationCodeService;
 import org.example.utils.EmailUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class EmailServiceImpl implements EmailService {
+    @Value("${spring.mail.username}")
+    private String email;
 
     @Resource
     private TemplateEngine templateEngine;
@@ -85,7 +88,7 @@ public class EmailServiceImpl implements EmailService {
         };
 
         // 使用 EmailUtil 发送邮件
-        new EmailUtil(mailSender).sendEmail(emailSendCodeDTO.getEmail(), subject, htmlContent);
+        new EmailUtil(mailSender, email).sendEmail(emailSendCodeDTO.getEmail(), subject, htmlContent);
 
         // 将验证码保存到数据库
         verificationCodeService.insert(new VerificationCode(emailSendCodeDTO.getEmail(), code));
@@ -105,7 +108,7 @@ public class EmailServiceImpl implements EmailService {
                 .replace("{{survey_link}}", emailSendInvitationDTO.getSurveyLink());
 
         // 使用 EmailUtil 发送邮件
-        new EmailUtil(mailSender).sendEmail(emailSendInvitationDTO.getEmail(), subject, htmlContent);
+        new EmailUtil(mailSender, email).sendEmail(emailSendInvitationDTO.getEmail(), subject, htmlContent);
     }
 
     @Override
@@ -118,7 +121,7 @@ public class EmailServiceImpl implements EmailService {
 
         String htmlContent = templateEngine.process("email_new_submission", context);
 
-        new EmailUtil(mailSender).sendEmail(emailNotifyNewSubmissionDTO.getEmail(), subject, htmlContent);
+        new EmailUtil(mailSender, email).sendEmail(emailNotifyNewSubmissionDTO.getEmail(), subject, htmlContent);
     }
 
     private String loadTemplateContent(String fileName) {

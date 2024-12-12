@@ -2,26 +2,26 @@ survey-planet:
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    host: 120.46.3.97
-    port: 3306
-    database: h_db22373053
-    username: u22373053
-    password: Aa923051
+    host:
+    port:
+    database:
+    username:
+    password:
 
   aliyun:
     # 阿里云OSS配置
     oss:
-      endpoint: oss-cn-beijing.aliyuncs.com
-      accessKeyId: LTAI5tS6M224UpKHj9vXrL4Z
-      accessKeySecret: 9srpqx72xTYdNPpfSN7C3NITN5RAwK
-      bucketName: survey-planet-test
+      endpoint:
+      accessKeyId:
+      accessKeySecret:
+      bucketName:
 
   # 邮箱配置
   mail:
     host: smtp.163.com
     port: 465
     username: surveyplanet@163.com
-    password: AD6VtDxH3JmDnXu5
+    password: # 替换为你生成的密码
     protocol: smtp
 
 
