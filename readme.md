@@ -246,7 +246,48 @@ prefork environment failed  container: failed to start container fork/exec /proc
 
 在上线后让 go-judge 运行在服务器的localhost就可以了，如果本地开发过程中需要调试，可以在启动时加上 `-http-addr=0.0.0.0:5051` 来使得任何ip地址都可以访问（同时服务器要开放5051端口）。
 
+---
 
+**更推荐的方式：使用Docker容器部署**
+
+下面的Dockerfile构建了一个包含C,C++,Java(JDK8)的go-judge沙盒，把下载得到的两个文件放在 go-judge 文件夹中，将 go-judeg 文件夹和Dockerfile放在同一个目录下，在该路径下使用 `docker build -t go-judge .`  命令构建镜像 `go-judge`。
+
+```dockerfile
+# 使用 Ubuntu 20.04 作为基础镜像（默认支持 OpenJDK 8）
+FROM ubuntu:20.04
+
+# 设置工作目录为 /go-judge
+WORKDIR /go-judge
+
+COPY ./go-judge /go-judge
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+    build-essential \ 
+    gcc \             
+    g++ \              
+    openjdk-8-jdk \
+    wget \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 设置 Java 8 环境变量
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+ENV PATH $JAVA_HOME/bin:$PATH
+
+# 设置容器启动时运行的命令
+CMD ["./go-judge"]
+```
+
+完成镜像构建后使用下面命令启动容器，为了安全不对外进行端口映射，容器间通过连接到相同网络进行调用。
+
+```shell
+docker run -d \
+ --name go-judge \
+ --privileged \
+ --network survey-planet \
+ go-judge
+```
 
 # 其他
 
